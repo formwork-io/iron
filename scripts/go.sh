@@ -33,8 +33,8 @@ export GOSH_DIR GOSH_PATH GOSH_SCRIPTS
 # Execute from GOSH_SCRIPTS
 cd "$GOSH_SCRIPTS" || exit 1
 
-# GS1: default go shell prompt.
-GS1=${GS1:="gosh (?|#)> "}
+# GOSH_PROMPT: go shell prompt.
+GOSH_PROMPT=${GOSH_PROMPT:="gosh (?|#)> "}
 
 function header {
     echo "gosh: the go shell"
@@ -83,7 +83,7 @@ function help {
 
 # Resets the prompt.
 function reset_prompt {
-    PROMPT="\n${GS1}"
+    PROMPT="\n${GOSH_PROMPT}"
 }
 
 reset_prompt
@@ -194,7 +194,7 @@ function loop() {
             declare -i EC=$?
             LASTCMD=$((x + 1))
             if [ "$EC" -ne 0 ]; then
-                PROMPT="\n($CHOICE failed)\n${GS1}"
+                PROMPT="\n($CHOICE failed)\n${GOSH_PROMPT}"
                 # stop here, last CHOICE failed
                 break
             fi
@@ -215,7 +215,7 @@ function args() {
         declare -i EC=$?
         LASTCMD=$((x + 1))
         if [ "$EC" -ne 0 ]; then
-            PROMPT="\n($CHOICE failed)\n${GS1}"
+            PROMPT="\n($CHOICE failed)\n${GOSH_PROMPT}"
             # stop here, last CHOICE failed
             break
         fi
