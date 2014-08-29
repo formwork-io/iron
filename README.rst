@@ -4,8 +4,7 @@ gosh
 the go shell
 ------------
 
-This is free software with ABSOLUTELY NO WARRANTY.
-**************************************************
+**This is free software with ABSOLUTELY NO WARRANTY.**
 
 Even in all its glory, your codebase will inevitably make you want to gouge
 your eyes out. It will demand you recite arcane incantations. You will need to
