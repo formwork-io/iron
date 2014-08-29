@@ -16,7 +16,7 @@ The go shell will let you keep your eyes. You can forget the incantations. It
 will do the coaxing, be your friend, and show you where the bicycle's pedals
 are lest you forget.
 
-Your scripts will be listed in a menu like the one shown below. Enter the items
+Your scripts will be listed in a menu like the examples below. Enter the items
 you want and the go shell will execute them in order. Should anything fail,
 execution stops. The last menu item chosen will be highlighted.
 
