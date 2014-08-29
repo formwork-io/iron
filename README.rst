@@ -50,10 +50,10 @@ Examples
     1: test-success:    Mimic a successful script.
     2: test-failure:    Mimic a failing script.
                                                                     
-**Execution stops on failure**::
+**Execution stops on failure**
 
 The go shell will execute items ``1``, ``2``, and ``1``. Since ``2`` fails,
-execution stops.
+execution stops::
 
     gosh (?|#)> 1 2 1
     (01-test-success.sh)
