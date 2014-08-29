@@ -29,6 +29,7 @@
 GOSH_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GOSH_PATH="$GOSH_DIR"/"$(basename "$0")"
 GOSH_SCRIPTS="${GOSH_SCRIPTS:=$GOSH_DIR}"
+export GOSH_DIR GOSH_PATH GOSH_SCRIPTS
 # Execute from GOSH_SCRIPTS
 cd "$GOSH_SCRIPTS" || exit 1
 
