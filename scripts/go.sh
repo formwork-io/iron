@@ -88,16 +88,12 @@ function reset_prompt {
 
 reset_prompt
 
-# Flush the stdin buffer.
-function flush_stdin {
-    # note the current mode
-    CUR_MODE=$(stty -g)
-    # set completed read as 0 chars, read timeout of 0
-    stty -icanon min 0 time 0
-    # read until empty
-    while read; do : ; done
-    # restore old mode
-    stty "$CUR_MODE"
+# Drain the stdin buffer.
+function drain_stdin {
+    # any input on stdin?
+    while read -t 0; do
+        read
+    done
 }
 
 # Echo $1 in reverse video.
@@ -118,9 +114,10 @@ function script {
     echo -n "("
     echo_hl "$SCRIPT"
     echo ")"
+    echo
     ./"$@"
     EC=$?
-    flush_stdin
+    drain_stdin
     return $EC
 }
 
@@ -140,7 +137,6 @@ function menu_short() {
         fi
         i=$i+1
     done
-    tabs -8
 }
 
 function menu_long() {
@@ -159,7 +155,6 @@ function menu_long() {
         fi
         i=$i+1
     done
-    tabs -8
 }
 
 function loop() {
@@ -177,7 +172,7 @@ function loop() {
             menu_short
             continue
         elif [ "$REPLY" == "?" ]; then
-            menu_long
+            menu_long | column -t -s '	'
             continue
         elif [ "$REPLY" == "help" ]; then
             help
