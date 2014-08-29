@@ -69,7 +69,7 @@ Try It
 ------
 
 A modern version of the `GNU Bash`_ shell and the `Readline Library`_ wrapper
-`rlwrap`_ are required. Then just::
+`rlwrap`_ are required. Then paste this into your terminal::
 
     git clone https://github.com/formwork-io/gosh.git
     cd gosh
