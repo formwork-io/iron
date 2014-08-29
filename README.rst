@@ -83,7 +83,7 @@ A modern version of the `GNU Bash`_ shell and the `Readline Library`_ wrapper
 Get It
 ------
 
-The go shell is composed of a few files at the root of your codebase.
+The go shell is composed of a few files at the root of your codebase::
 
     .
     ├── .gosh.sh
@@ -92,7 +92,7 @@ The go shell is composed of a few files at the root of your codebase.
     └── scripts
         └── go.sh
     
-        1 directory, 4 files
+    1 directory, 4 files
 
 Run the `overlay`_ script from the root of your codebase::
 
