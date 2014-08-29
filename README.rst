@@ -1,9 +1,6 @@
 gosh
 ====
 
-.. contents::
-
-
 the go shell
 ------------
 
@@ -23,7 +20,12 @@ Your scripts will be listed in a menu like the examples below. Enter the items
 you want and the go shell will execute them in order. Should anything fail,
 execution stops. The last menu item chosen will be highlighted.
 
-**Example**::
+.. contents::
+
+Examples
+--------
+
+**Example menu**::
 
     gosh: the go shell
     https://github.com/formwork-io/gosh
@@ -41,7 +43,7 @@ execution stops. The last menu item chosen will be highlighted.
     gosh (?|#)> 
 
 
-**Question mark displays help**::
+**Extended menu via '?'**::
 
     gosh (?|#)> ?
     
@@ -49,6 +51,9 @@ execution stops. The last menu item chosen will be highlighted.
     2: test-failure:    Mimic a failing script.
                                                                     
 **Execution stops on failure**::
+
+The go shell will execute items ``1``, ``2``, and ``1``. Since ``2`` fails,
+execution stops.
 
     gosh (?|#)> 1 2 1
     (01-test-success.sh)
