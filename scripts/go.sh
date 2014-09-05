@@ -96,11 +96,20 @@ function drain_stdin {
     done
 }
 
+# Strip the color codes in $1.
+function strip_color {
+    echo -en "$@" \
+        | sed -E "s/"$'\E'"\[([0-9]{1,2}(;[0-9]{1,2})*)?m//g"
+}
+
 # Echo $1 in reverse video.
 function echo_hl {
-    tput smso
-    echo -n "$1"
-    tput rmso
+    echo -en "\e[7m$1\e[0m"
+}
+
+# Echo $1 in normal video.
+function echo_nohl {
+    echo -en "\e[0m$1\e[0m"
 }
 
 # Output a script header.
@@ -128,12 +137,13 @@ function menu_short() {
     while [ $i -lt ${#SCRIPTS[@]} ]; do
         source "${SCRIPTS[$i]}"
         declare -i LASTCMD=${LASTCMD:-0}
+        ITEM="$((i + 1)):"
         if [ "$((LASTCMD))" -eq "$((i + 1))" ]; then
-            tput smso
-            echo -e "$((i + 1)): $SCRIPT_DESC"
-            tput rmso
+            echo_hl "$ITEM $SCRIPT_DESC"
+            echo
         else
-            echo -e "$((i + 1)): $SCRIPT_DESC"
+            echo_nohl "$ITEM $SCRIPT_DESC"
+            echo
         fi
         i=$i+1
     done
@@ -146,12 +156,15 @@ function menu_long() {
     while [ $i -lt ${#SCRIPTS[@]} ]; do
         source "${SCRIPTS[$i]}"
         declare -i LASTCMD=${LASTCMD:-0}
+        SCRIPT_DESC=$(strip_color $SCRIPT_DESC)
+        SCRIPT_HELP=$(strip_color $SCRIPT_HELP)
+        ITEM="$((i + 1)): $SCRIPT_DESC:\t$SCRIPT_HELP"
         if [ "$((LASTCMD))" -eq "$((i + 1))" ]; then
-            tput smso
-            echo -e "$((i + 1)): $SCRIPT_DESC:\t$SCRIPT_HELP"
-            tput rmso
+            echo_hl "$ITEM"
+            echo
         else
-            echo -e "$((i + 1)): $SCRIPT_DESC:\t$SCRIPT_HELP"
+            echo_nohl "$ITEM"
+            echo
         fi
         i=$i+1
     done
@@ -182,9 +195,14 @@ function loop() {
             exit 0
         fi
         for x in $REPLY; do
+            declare -i y=$x
+            if [ $y -eq 0 ]; then
+                echo "$x: not a menu item"
+                break
+            fi
             # XXX check x is valid
             declare -i x=$x-1
-            local CHOICE=${SCRIPTS[$x]}
+            local CHOICE=${SCRIPTS[$x]} || break
             script "$CHOICE"
             declare -i EC=$?
             LASTCMD=$((x + 1))
