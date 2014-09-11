@@ -182,6 +182,11 @@ function menu_long() {
 
 function process_input() {
     while (($#)); do
+        # special case; allow exit in input arrays
+        if [ "$1" == "exit" ]; then
+            exit 0
+        fi
+
         # does $1 look like an int greater than 0?
         if ! (valid_item "$1"); then
             warn_item
@@ -239,8 +244,6 @@ function loop() {
                 help
                 menu_short
                 continue
-            elif [ "${REPLY[0]}" == "exit" ]; then
-                exit 0
             fi
         fi
         process_input "${REPLY[@]}"
