@@ -34,7 +34,7 @@ export GOSH_DIR GOSH_PATH GOSH_SCRIPTS
 cd "$GOSH_SCRIPTS" || exit 1
 
 # GOSH_PROMPT: go shell prompt.
-GOSH_PROMPT=${GOSH_PROMPT:="gosh (?|#)> "}
+GOSH_PROMPT=${GOSH_PROMPT:="gosh (?|#|#?)> "}
 
 function header {
     echo "gosh: the go shell"
@@ -55,7 +55,15 @@ function redefine_scripts {
     fi
 }
 
-# Returns 0 if $1 looks like an int greater than 0, false otherwise.
+# Returns 0 if $1 looks like help being requested for a script, 1 otherwise.
+function valid_extended_help {
+    if [[ "$1" =~ ^[1-9][0-9]*\?$ ]]; then
+        return 0
+    fi
+    return 1
+}
+
+# Returns 0 if $1 looks like an int greater than 0, 1 otherwise.
 function valid_item {
     if [[ "$1" =~ ^[1-9][0-9]*$ ]]; then
         return 0
@@ -230,20 +238,38 @@ function menu_long() {
 
 function process_input() {
     while (($#)); do
+        TOKEN="$1"
+
         # special case; allow exit in input arrays
-        if [ "$1" == "exit" ]; then
+        if [ "$TOKEN" == "exit" ]; then
             exit 0
         fi
 
-        # does $1 look like an int greater than 0?
-        if ! (valid_item "$1"); then
+        # set to 1 when script help requested
+        local extended=0
+        # set to 1 when item requested
+        local item=0
+
+        # does $TOKEN look like the user requested extended help?
+        if (valid_extended_help "$TOKEN"); then
+            extended=1
+
+        # does $TOKEN look like the user requested a menu item?
+        elif (valid_item "$TOKEN"); then
+            item=1
+
+        # doesn't look like extended help or a menu item...
+        else
             warn_item
             # discard all remaining input
             break
         fi
 
-        # does $1 fall outside the range of menu items?
-        if [ "$1" -gt ${#SCRIPTS[@]} ]; then
+        # We know the user wants extended help, strip the '?'.
+        [[ "$extended" -eq 1 ]] && TOKEN=$(echo $TOKEN | tr -d '?')
+
+        # does $TOKEN fall outside the range of menu items?
+        if [ "$TOKEN" -gt $NUM_SCRIPTS ]; then
             warn_item
             # discard all remaining input
             break
@@ -251,20 +277,25 @@ function process_input() {
 
         # SCRIPTS is a zero-based array so decrement
         # menu item (menu item 1 becomes choice 0)
-        local x=$(($1 - 1))
+        local x=$(($TOKEN - 1))
         local CHOICE=${SCRIPTS[$x]} || break
 
-        # Run the script...
-        script "$CHOICE"
+        if [ "$extended" -eq 1 ]; then
+            # Show extended help
+            script_help "$CHOICE"
+        else
+            # Run the script...
+            script "$CHOICE"
 
-        # ... and capture its exit status
-        declare -i EC=$?
+            # ... and capture its exit status
+            declare -i EC=$?
 
-        LASTCMD=$(($1))
-        if [ "$EC" -ne 0 ]; then
-            PROMPT="\n($CHOICE failed)\n${GOSH_PROMPT}"
-            # stop here, last CHOICE failed
-            break
+            LASTCMD=$(($TOKEN))
+            if [ "$EC" -ne 0 ]; then
+                PROMPT="\n($CHOICE failed)\n${GOSH_PROMPT}"
+                # stop here, last CHOICE failed
+                break
+            fi
         fi
 
         # continue to next CHOICE
