@@ -127,7 +127,7 @@ the interpreter directive::
 
     #!/usr/bin/env bash
     export SCRIPT_HELP="Short summary of what this script does."
-    export SCRIPT_DESC="example"
+    export SCRIPT_NAME="example"
     [[ "${BASH_SOURCE[0]}" != "${0}" ]] && return 0
 
 These three lines let the go shell create a menu for you::
@@ -170,7 +170,7 @@ GOSH_SCRIPTS
 
     #!/usr/bin/env bash
     export SCRIPT_HELP="Access administrative menu."
-    export SCRIPT_DESC="admin"
+    export SCRIPT_NAME="admin"
     [[ "${BASH_SOURCE[0]}" != "${0}" ]] && return 0
 
     DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

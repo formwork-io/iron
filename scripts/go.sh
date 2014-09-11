@@ -63,6 +63,21 @@ function valid_item {
     return 1
 }
 
+# Source script $1, defaulting VARS as needed.
+function source_script {
+    unset SCRIPT_NAME SCRIPT_HELP SCRIPT_EXTENDED_HELP
+    source "$1"
+    if [ -z "$SCRIPT_NAME" ]; then
+        SCRIPT_NAME="$(basename "$1")"
+    fi
+    if [ -z "$SCRIPT_HELP" ]; then
+        SCRIPT_HELP="This script has no help."
+    fi
+    if [ -z "$SCRIPT_EXTENDED_HELP" ]; then
+        SCRIPT_EXTENDED_HELP="This script has no extended help."
+    fi
+}
+
 function warn_item() {
     echo -e "\nMenu items are between 1 and ${#SCRIPTS[@]}."
 }
@@ -142,19 +157,52 @@ function script {
     return $EC
 }
 
+# Output script help.
+# E.g.:
+#     script "./01-foo.sh"
+# Prints:
+#     <script filename>
+#
+#     NAME
+#            SCRIPT_NAME
+#
+#     HELP
+#            SCRIPT_HELP
+#     
+#     EXTENDED HELP
+#            SCRIPT_EXTENDED_HELP
+#
+function script_help {
+    source_script "$1"
+    local fname=$(basename "$1")
+    echo     "$fname"
+    echo
+    echo -e  "\e[1mNAME\e[0m"
+    echo -e  "       $SCRIPT_NAME"
+    echo
+    echo -e  "\e[1mHELP\e[0m"
+    echo -e  "       $SCRIPT_HELP"
+    echo
+    echo -e  "\e[1mEXTENDED HELP\e[0m"
+    FOLD_WIDTH=$(($(tput cols) - 14))
+    echo -e "$SCRIPT_EXTENDED_HELP" | fold -sw $FOLD_WIDTH | while read line; do
+        echo "       $line"
+    done
+}
+
 function menu_short() {
     echo
     declare -i i=0
-    while [ $i -lt ${#SCRIPTS[@]} ]; do
-        source "${SCRIPTS[$i]}"
+    while [ $i -lt $NUM_SCRIPTS ]; do
+        source_script "${SCRIPTS[$i]}"
         declare -i LASTCMD=${LASTCMD:-0}
-        ITEM="$((i + 1)):"
+        ITEM=$(printf "%${PADDING}s" "$((i + 1)):")
         if [ "$((LASTCMD))" -eq "$((i + 1))" ]; then
-            local DESC=$(strip_color "$SCRIPT_DESC")
-            echo_hl "$ITEM $DESC"
+            local NAME=$(strip_color "$SCRIPT_NAME")
+            echo_hl "$ITEM $NAME"
             echo
         else
-            echo_nohl "$ITEM $SCRIPT_DESC"
+            echo_nohl "$ITEM $SCRIPT_NAME"
             echo
         fi
         i=$i+1
@@ -163,12 +211,12 @@ function menu_short() {
 
 function menu_long() {
     declare -i i=0
-    while [ $i -lt ${#SCRIPTS[@]} ]; do
-        source "${SCRIPTS[$i]}"
+    while [ $i -lt $NUM_SCRIPTS ]; do
+        source_script "${SCRIPTS[$i]}"
         declare -i LASTCMD=${LASTCMD:-0}
-        SCRIPT_DESC=$(strip_color "$SCRIPT_DESC")
+        SCRIPT_NAME=$(strip_color "$SCRIPT_NAME")
         SCRIPT_HELP=$(strip_color "$SCRIPT_HELP")
-        ITEM="$((i + 1)): $SCRIPT_DESC:\t$SCRIPT_HELP"
+        ITEM="$((i + 1)): $SCRIPT_NAME:\t$SCRIPT_HELP"
         if [ "$((LASTCMD))" -eq "$((i + 1))" ]; then
             echo_hl "$ITEM"
             echo
