@@ -150,7 +150,7 @@ function menu_short() {
         declare -i LASTCMD=${LASTCMD:-0}
         ITEM="$((i + 1)):"
         if [ "$((LASTCMD))" -eq "$((i + 1))" ]; then
-            local DESC=$(strip_color $SCRIPT_DESC)
+            local DESC=$(strip_color "$SCRIPT_DESC")
             echo_hl "$ITEM $DESC"
             echo
         else
@@ -166,8 +166,8 @@ function menu_long() {
     while [ $i -lt ${#SCRIPTS[@]} ]; do
         source "${SCRIPTS[$i]}"
         declare -i LASTCMD=${LASTCMD:-0}
-        SCRIPT_DESC=$(strip_color $SCRIPT_DESC)
-        SCRIPT_HELP=$(strip_color $SCRIPT_HELP)
+        SCRIPT_DESC=$(strip_color "$SCRIPT_DESC")
+        SCRIPT_HELP=$(strip_color "$SCRIPT_HELP")
         ITEM="$((i + 1)): $SCRIPT_DESC:\t$SCRIPT_HELP"
         if [ "$((LASTCMD))" -eq "$((i + 1))" ]; then
             echo_hl "$ITEM"
