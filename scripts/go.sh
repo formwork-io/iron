@@ -144,7 +144,6 @@ function script {
 
 function menu_short() {
     echo
-    redefine_scripts
     declare -i i=0
     while [ $i -lt ${#SCRIPTS[@]} ]; do
         source "${SCRIPTS[$i]}"
@@ -163,8 +162,6 @@ function menu_short() {
 }
 
 function menu_long() {
-    echo
-    redefine_scripts
     declare -i i=0
     while [ $i -lt ${#SCRIPTS[@]} ]; do
         source "${SCRIPTS[$i]}"
@@ -235,6 +232,7 @@ function loop() {
             continue
         elif [ "${#REPLY[@]}" -eq 1 ]; then
             if [ "${REPLY[0]}" == "?" ]; then
+                echo
                 menu_long | column -t -s '	'
                 continue
             elif [ "${REPLY[0]}" == "help" ]; then
@@ -246,17 +244,18 @@ function loop() {
             fi
         fi
         process_input "${REPLY[@]}"
+        redefine_scripts
     done
 }
 
 function args() {
     echo
     echo "Processing arguments before entering the shell."
-    redefine_scripts
     process_input "$@"
     echo "Processing arguments before entering the shell."
 }
 
+redefine_scripts
 if [ $# -gt 0 ]; then
     args "$@"
 else
