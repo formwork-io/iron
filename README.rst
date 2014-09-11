@@ -196,7 +196,7 @@ GOSH_SCRIPTS
     #!/usr/bin/env bash
     export SCRIPT_HELP="Access administrative menu."
     export SCRIPT_NAME="admin"
-    [[ "${BASH_SOURCE[0]}" != "${0}" ]] && return 0
+    [[ "$GOGO_GOSH_SOURCE" -eq 1 ]] && return 0
 
     DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     GOSH_SCRIPTS="$DIR"/admin GOSH_PROMPT="admin gosh (?|#|#?)> " $GOSH_PATH
