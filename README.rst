@@ -1,8 +1,9 @@
+gosh
+====
+
 .. image:: https://badge.waffle.io/formwork-io/gosh.png?label=ready&title=Ready 
  :target: https://waffle.io/formwork-io/gosh
  :alt: 'Stories in Ready'
-gosh
-====
 
 the go shell
 ------------
