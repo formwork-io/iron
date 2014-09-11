@@ -76,7 +76,9 @@ function valid_item {
 # Source script $1, defaulting VARS as needed.
 function source_script {
     unset SCRIPT_NAME SCRIPT_HELP SCRIPT_EXTENDED_HELP
+    GOGO_GOSH_SOURCE=1
     source "$1"
+    unset GOGO_GOSH_SOURCE
     if [ -z "$SCRIPT_NAME" ]; then
         SCRIPT_NAME="$(basename "$1")"
     fi

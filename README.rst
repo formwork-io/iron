@@ -22,6 +22,7 @@ execution stops. The last menu item chosen will be highlighted.
 
 .. contents::
 
+
 Examples
 --------
 
@@ -30,39 +31,58 @@ Examples
     gosh: the go shell
     https://github.com/formwork-io/gosh
     This is free software with ABSOLUTELY NO WARRANTY.
-    
+
     Usage: <menu item>...
     Try 'help' for more information.
-    
+
     Entering the shell, [CTRL-C] to exit.
-    
+
     1: test-success
     2: test-failure
-                                                                                                                                   
-    
-    gosh (?|#)> 
+
+
+    gosh (?|#|#?)>
 
 
 **Extended menu via '?'**::
 
-    gosh (?|#)> ?
-    
+    gosh (?|#|#?)> ?
+
     1: test-success:    Mimic a successful script.
     2: test-failure:    Mimic a failing script.
-                                                                    
+
+
+**Extended script help via '#?'**::
+
+    gosh (?|#|#?)> 1?
+
+    1: test-success:    Mimic a successful script.
+    2: test-failure:    Mimic a failing script.
+    01-test-success.sh
+
+    **NAME**
+           test-success
+
+    **HELP**
+           Mimic a successful script.
+
+    **EXTENDED HELP**
+           This script has no extended help.
+
+
 **Execution stops on failure**
 
 The go shell will execute items ``1``, ``2``, and ``1``. Since ``2`` fails,
 execution stops::
 
-    gosh (?|#)> 1 2 1
+    gosh (?|#|#?)> 1 2 1
     (01-test-success.sh)
     Pretending to do something... SUCCESS
     (02-test-failure.sh)
     Pretending to do something... FAILED
-  
+
     (02-test-failure.sh failed)
-    gosh (?|#)> 
+    gosh (?|#|#?)>
 
 
 Try It
@@ -106,7 +126,7 @@ Take a look at your version control status (e.g., ``git status``) to see
 exactly what the effect was.
 
 .. _overlay: https://raw.githubusercontent.com/formwork-io/gosh/master/overlay.sh
-    
+
 
 Use It
 ------
@@ -122,18 +142,23 @@ For example::
     scripts/02-build.sh
     scripts/03-deploy.sh
 
-Each script should have three lines included at the top immediately following
+Each script should have four lines included at the top immediately following
 the interpreter directive::
 
     #!/usr/bin/env bash
-    export SCRIPT_HELP="Short summary of what this script does."
     export SCRIPT_NAME="example"
-    [[ "${BASH_SOURCE[0]}" != "${0}" ]] && return 0
+    export SCRIPT_HELP="Short summary of what this script does."
+    export SCRIPT_EXTENDED_HELP="Extended help for this script... "
+    [[ "$GOGO_GOSH_SOURCE" -eq 1 ]] && return 0
 
-These three lines let the go shell create a menu for you::
+The variable exports aren't *strictly required* though **the following line
+should absolutely be included**::
 
-    gosh (?|#)> ?
-    1: example:              Short summary of what this script does.
+    [[ "$GOGO_GOSH_SOURCE" -eq 1 ]] && return 0
+
+This prevents the script from running any further when the go shell sources
+the script to create its menus.
+
 
 Customizing
 -----------
@@ -161,8 +186,8 @@ GOSH_PROMPT
     5: test-close-stdin
     6: test-close-stdout
     7: test-submenu
-    
-    the go shell: examples> 
+
+    the go shell: examples>
 
 GOSH_SCRIPTS
   Change where the go shell looks for scripts. For example, here's a go shell
@@ -174,6 +199,6 @@ GOSH_SCRIPTS
     [[ "${BASH_SOURCE[0]}" != "${0}" ]] && return 0
 
     DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    GOSH_SCRIPTS="$DIR"/admin GOSH_PROMPT="admin gosh (?|#)> " $GOSH_PATH
+    GOSH_SCRIPTS="$DIR"/admin GOSH_PROMPT="admin gosh (?|#|#?)> " $GOSH_PATH
     exit 0
 

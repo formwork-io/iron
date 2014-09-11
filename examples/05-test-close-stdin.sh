@@ -3,7 +3,7 @@
 # The next three lines are for the go shell.
 export SCRIPT_NAME="test-close-stdin"
 export SCRIPT_HELP="Mimic a script that closes stdin."
-[[ "${BASH_SOURCE[0]}" != "${0}" ]] && return 0
+[[ "$GOGO_GOSH_SOURCE" -eq 1 ]] && return 0
 
 # Normal script execution starts here.
 echo -n "Closing stdin... "

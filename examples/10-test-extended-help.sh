@@ -14,7 +14,7 @@ documented here.
 
        FOO -- the FOO environment variable
 "
-[[ "${BASH_SOURCE[0]}" != "${0}" ]] && return 0
+[[ "$GOGO_GOSH_SOURCE" -eq 1 ]] && return 0
 
 # Normal script execution starts here.
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"/../
