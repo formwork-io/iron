@@ -76,7 +76,7 @@ function valid_item {
 # Source script $1, defaulting VARS as needed.
 function source_script {
     unset SCRIPT_NAME SCRIPT_HELP SCRIPT_EXTENDED_HELP
-    GOGO_GOSH_SOURCE=1
+    export GOGO_GOSH_SOURCE=1
     source "$1"
     unset GOGO_GOSH_SOURCE
     if [ -z "$SCRIPT_NAME" ]; then
@@ -271,7 +271,7 @@ function process_input() {
         fi
 
         # We know the user wants extended help, strip the '?'.
-        [[ "$extended" -eq 1 ]] && TOKEN=$(echo $TOKEN | tr -d '?')
+        [[ "$extended" -eq 1 ]] && TOKEN=$(echo "$TOKEN" | tr -d '?')
 
         # does $TOKEN fall outside the range of menu items?
         if [ "$TOKEN" -gt $NUM_SCRIPTS ]; then
@@ -282,20 +282,20 @@ function process_input() {
 
         # SCRIPTS is a zero-based array so decrement
         # menu item (menu item 1 becomes choice 0)
-        local x=$(($TOKEN - 1))
+        local x=$((TOKEN - 1))
         local CHOICE=${SCRIPTS[$x]} || break
 
         if [ "$extended" -eq 1 ]; then
             # Show extended help
             script_help "$CHOICE"
-        else
+        elif [ "$item" -eq 1 ]; then
             # Run the script...
             script "$CHOICE"
 
             # ... and capture its exit status
             declare -i EC=$?
 
-            LASTCMD=$(($TOKEN))
+            LASTCMD=$((TOKEN))
             if [ "$EC" -ne 0 ]; then
                 PROMPT="\n($CHOICE failed)\n${GOSH_PROMPT}"
                 # stop here, last CHOICE failed

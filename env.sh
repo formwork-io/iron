@@ -12,6 +12,6 @@ default CUSTOM_ENV_SH   "$DIR/env.sh.custom"
 default GOSH_SCRIPTS    "$DIR"/scripts
 
 if [ -r "$CUSTOM_ENV_SH" ]; then
-    source $CUSTOM_ENV_SH || exit 1
+    source "$CUSTOM_ENV_SH" || exit 1
 fi
 
