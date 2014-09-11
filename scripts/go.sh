@@ -55,6 +55,18 @@ function redefine_scripts {
     fi
 }
 
+# Returns 0 if $1 looks like an int greater than 0, false otherwise.
+function valid_item {
+    if [[ "$1" =~ ^[1-9][0-9]*$ ]]; then
+        return 0
+    fi
+    return 1
+}
+
+function warn_item() {
+    echo -e "\nMenu items are between 1 and ${#SCRIPTS[@]}."
+}
+
 # Prints help.
 function help {
     header
@@ -139,7 +151,8 @@ function menu_short() {
         declare -i LASTCMD=${LASTCMD:-0}
         ITEM="$((i + 1)):"
         if [ "$((LASTCMD))" -eq "$((i + 1))" ]; then
-            echo_hl "$ITEM $SCRIPT_DESC"
+            local DESC=$(strip_color $SCRIPT_DESC)
+            echo_hl "$ITEM $DESC"
             echo
         else
             echo_nohl "$ITEM $SCRIPT_DESC"
@@ -170,49 +183,69 @@ function menu_long() {
     done
 }
 
+function process_input() {
+    while (($#)); do
+        # does $1 look like an int greater than 0?
+        if ! (valid_item "$1"); then
+            warn_item
+            # discard all remaining input
+            break
+        fi
+
+        # does $1 fall outside the range of menu items?
+        if [ "$1" -gt ${#SCRIPTS[@]} ]; then
+            warn_item
+            # discard all remaining input
+            break
+        fi
+
+        # SCRIPTS is a zero-based array so decrement
+        # menu item (menu item 1 becomes choice 0)
+        local x=$(($1 - 1))
+        local CHOICE=${SCRIPTS[$x]} || break
+
+        # Run the script...
+        script "$CHOICE"
+
+        # ... and capture its exit status
+        declare -i EC=$?
+
+        LASTCMD=$(($1))
+        if [ "$EC" -ne 0 ]; then
+            PROMPT="\n($CHOICE failed)\n${GOSH_PROMPT}"
+            # stop here, last CHOICE failed
+            break
+        fi
+
+        # continue to next CHOICE
+        shift
+    done
+}
+
 function loop() {
-    echo
-    echo "Usage: <menu item>..."
-    echo "Try 'help' for more information."
     echo
     echo "Entering the shell, [CTRL-C] to exit."
     menu_short
     while true; do
         echo -en "$PROMPT"
-        read REPLY || exit 0
+        read -a REPLY || exit 0
         reset_prompt
-        if [ -z "$REPLY" ]; then
+        if [ "${#REPLY[@]}" -eq 0 ]; then
             menu_short
             continue
-        elif [ "$REPLY" == "?" ]; then
-            menu_long | column -t -s '	'
-            continue
-        elif [ "$REPLY" == "help" ]; then
-            help
-            menu_short
-            continue
-        elif [ "$REPLY" == "exit" ]; then
-            exit 0
+        elif [ "${#REPLY[@]}" -eq 1 ]; then
+            if [ "${REPLY[0]}" == "?" ]; then
+                menu_long | column -t -s '	'
+                continue
+            elif [ "${REPLY[0]}" == "help" ]; then
+                help
+                menu_short
+                continue
+            elif [ "${REPLY[0]}" == "exit" ]; then
+                exit 0
+            fi
         fi
-        for x in $REPLY; do
-            declare -i y=$x
-            if [ $y -eq 0 ]; then
-                echo "$x: not a menu item"
-                break
-            fi
-            # XXX check x is valid
-            declare -i x=$x-1
-            local CHOICE=${SCRIPTS[$x]} || break
-            script "$CHOICE"
-            declare -i EC=$?
-            LASTCMD=$((x + 1))
-            if [ "$EC" -ne 0 ]; then
-                PROMPT="\n($CHOICE failed)\n${GOSH_PROMPT}"
-                # stop here, last CHOICE failed
-                break
-            fi
-            # continue to next CHOICE
-        done
+        process_input "${REPLY[@]}"
     done
 }
 
@@ -220,23 +253,16 @@ function args() {
     echo
     echo "Processing arguments before entering the shell."
     redefine_scripts
-    for x in "$@"; do
-        # XXX check x is valid
-        declare -i x=$x-1
-        local CHOICE=${SCRIPTS[$x]}
-        script "$CHOICE"
-        declare -i EC=$?
-        LASTCMD=$((x + 1))
-        if [ "$EC" -ne 0 ]; then
-            PROMPT="\n($CHOICE failed)\n${GOSH_PROMPT}"
-            # stop here, last CHOICE failed
-            break
-        fi
-        # continue to next CHOICE
-    done
+    process_input "$@"
+    echo "Processing arguments before entering the shell."
 }
 
 if [ $# -gt 0 ]; then
     args "$@"
+else
+    echo
+    echo "Usage: <menu item>..."
+    echo "Try 'help' for more information."
 fi
 loop
+
