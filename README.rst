@@ -94,7 +94,8 @@ The go shell is composed of a few files at the root of your codebase::
 
     1 directory, 4 files
 
-Run the `overlay`_ script from the root of your codebase::
+You can get them easily by running the `overlay`_ script from the root of your
+codebase::
 
     cd my-project
     wget --content-disposition \
