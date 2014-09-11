@@ -48,7 +48,9 @@ function redefine_scripts {
     # How go shell scripts are found.
     SCRIPTS=($(find "$GOSH_SCRIPTS" -maxdepth 1 -executable \
               -regex '.*/[0-9]+-.*\.sh' -exec basename {} \; | sort))
-    if [ "${#SCRIPTS[@]}" -eq 0 ]; then
+    NUM_SCRIPTS="${#SCRIPTS[@]}"
+    PADDING=$(echo -n "$NUM_SCRIPTS:" | wc -c)
+    if [ "$NUM_SCRIPTS" -eq 0 ]; then
         echo "No scripts found."
         echo "See https://github.com/formwork-io/gosh."
         exit 1
@@ -87,7 +89,7 @@ function source_script {
 }
 
 function warn_item() {
-    echo -e "\nMenu items are between 1 and ${#SCRIPTS[@]}."
+    echo -e "\nMenu items are between 1 and $NUM_SCRIPTS."
 }
 
 # Prints help.
@@ -224,7 +226,8 @@ function menu_long() {
         declare -i LASTCMD=${LASTCMD:-0}
         SCRIPT_NAME=$(strip_color "$SCRIPT_NAME")
         SCRIPT_HELP=$(strip_color "$SCRIPT_HELP")
-        ITEM="$((i + 1)): $SCRIPT_NAME:\t$SCRIPT_HELP"
+        ITEM=$(printf "%${PADDING}s" "$((i + 1)):")
+        ITEM="$ITEM $SCRIPT_NAME:\t$SCRIPT_HELP"
         if [ "$((LASTCMD))" -eq "$((i + 1))" ]; then
             echo_hl "$ITEM"
             echo
