@@ -58,15 +58,23 @@ function redefine_scripts {
 }
 
 # Returns 0 if $1 looks like help being requested for a script, 1 otherwise.
-function valid_extended_help {
+function is_extended_help {
     if [[ "$1" =~ ^[1-9][0-9]*\?$ ]]; then
         return 0
     fi
     return 1
 }
 
+# Returns 0 if $1 looks like a submenu call w/ args, 1 otherwise.
+function is_submenu_argcall {
+    if [[ "$1" =~ ^[1-9][0-9]*,[0-9,]*$ ]]; then
+        return 0
+    fi
+    return 1
+}
+
 # Returns 0 if $1 looks like an int greater than 0, 1 otherwise.
-function valid_item {
+function is_item {
     if [[ "$1" =~ ^[1-9][0-9]*$ ]]; then
         return 0
     fi
@@ -157,13 +165,16 @@ function echo_nohl {
 # Prints:
 #     (01-foo.sh)
 function script {
+    local _SCRIPT="$1"
+    shift
     # output a script header
-    local SCRIPT=$(basename "$1")
+    local SCRIPT=$(basename "$_SCRIPT")
     echo -n "("
     echo_hl "$SCRIPT"
     echo ")"
     echo
-    ./"$@"
+    echo $@
+    ./"$_SCRIPT" $@
     EC=$?
     drain_stdin
     return $EC
@@ -252,15 +263,20 @@ function process_input() {
 
         # set to 1 when script help requested
         local extended=0
+        # set to 1 when submenu argcall requested
+        local submenu=0
         # set to 1 when item requested
         local item=0
 
         # does $TOKEN look like the user requested extended help?
-        if (valid_extended_help "$TOKEN"); then
+        if (is_extended_help "$TOKEN"); then
             extended=1
 
+        elif (is_submenu_argcall "$TOKEN"); then
+            submenu=1
+
         # does $TOKEN look like the user requested a menu item?
-        elif (valid_item "$TOKEN"); then
+        elif (is_item "$TOKEN"); then
             item=1
 
         # doesn't look like extended help or a menu item...
@@ -272,6 +288,11 @@ function process_input() {
 
         # We know the user wants extended help, strip the '?'.
         [[ "$extended" -eq 1 ]] && TOKEN=$(echo "$TOKEN" | tr -d '?')
+
+        if [ "$submenu" -eq 1 ]; then
+            ARGS=$(echo "$TOKEN" | grep -o ",[,0-9]*" | tr ',' ' ')
+            TOKEN=$(echo "$TOKEN" | grep -o "^[[:digit:]]*," | tr -d ',')
+        fi
 
         # does $TOKEN fall outside the range of menu items?
         if [ "$TOKEN" -gt $NUM_SCRIPTS ]; then
@@ -288,6 +309,9 @@ function process_input() {
         if [ "$extended" -eq 1 ]; then
             # Show extended help
             script_help "$CHOICE"
+        elif [ "$submenu" -eq 1 ]; then
+            # Run the submenu w/ args
+            script "$CHOICE" $ARGS
         elif [ "$item" -eq 1 ]; then
             # Run the script...
             script "$CHOICE"

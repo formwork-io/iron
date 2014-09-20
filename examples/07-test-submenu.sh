@@ -9,6 +9,6 @@ export SCRIPT_HELP="Mimic a submenu."
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GOSH_SCRIPTS="$DIR"/submenu \
     GOSH_PROMPT="submenu gosh (?|#)> " \
-    $GOSH_PATH
+    $GOSH_PATH $@
 exit 0
 
