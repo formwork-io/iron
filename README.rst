@@ -47,16 +47,20 @@ Here's an example go shell for a codebase with two scripts ``test-success`` and
 
     gosh (?|#|#?)>
 
+Extended Menu
++++++++++++++
 
-**Extended menu via '?'**::
+Here's an example showing the same scripts in the *extended menu* ``?``::
 
     gosh (?|#|#?)> ?
 
     1: test-success:    Mimic a successful script.
     2: test-failure:    Mimic a failing script.
 
+Script Help
++++++++++++
 
-**Extended script help via '#?'**::
+Here's an example showing a script's help ``1?``::the help for script 1::
 
     gosh (?|#|#?)> 1?
 
@@ -73,11 +77,12 @@ Here's an example go shell for a codebase with two scripts ``test-success`` and
     **EXTENDED HELP**
            This script has no extended help.
 
+Execution Stops on Failure
+++++++++++++++++++++++++++
 
-**Execution stops on failure**
-
-The go shell will execute items ``1``, ``2``, and ``1``. Since ``2`` fails,
-execution stops::
+The go shell executes scripts in order. Should a script fail, execution will
+stop. In the following example, the third script is not run as the previous
+script fails::
 
     gosh (?|#|#?)> 1 2 1
     (01-test-success.sh)
@@ -87,7 +92,6 @@ execution stops::
 
     (02-test-failure.sh failed)
     gosh (?|#|#?)>
-
 
 Try It
 ------
