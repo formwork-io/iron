@@ -50,7 +50,7 @@ Here's an example go shell for a codebase with two scripts ``test-success`` and
 Extended Menu
 +++++++++++++
 
-Here's an example showing the same scripts in the *extended menu* ``?``::
+Here's an example showing the same scripts in the extended menu via ``?``::
 
     gosh (?|#|#?)> ?
 
@@ -60,7 +60,7 @@ Here's an example showing the same scripts in the *extended menu* ``?``::
 Script Help
 +++++++++++
 
-Here's an example showing a script's help ``1?``::the help for script 1::
+Here's an example showing a script's help via ``1?``::
 
     gosh (?|#|#?)> 1?
 
