@@ -168,8 +168,8 @@ This prevents the script from running any further when the go shell sources
 the script to create its menus.
 
 
-Customizing
------------
+Customize It
+------------
 
 GOSH_PROMPT
   Change the go shell prompt.
