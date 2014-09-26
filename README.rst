@@ -29,7 +29,8 @@ Examples
 Example Menu
 ++++++++++++
 
-Here's an example from a codebase with two scripts::
+Here's an example go shell for a codebase with two scripts ``test-success`` and
+``test-failure``::
 
     gosh: the go shell
     https://github.com/formwork-io/gosh
