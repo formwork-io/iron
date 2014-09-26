@@ -26,7 +26,10 @@ execution stops. The last menu item chosen will be highlighted.
 Examples
 --------
 
-**Example menu**::
+Example Menu
+++++++++++++
+
+Here's an example from a codebase with two scripts::
 
     gosh: the go shell
     https://github.com/formwork-io/gosh
