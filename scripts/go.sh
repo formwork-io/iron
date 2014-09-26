@@ -166,17 +166,20 @@ function echo_nohl {
 #     (01-foo.sh)
 function script {
     local _SCRIPT="$1"
-    shift
+    if [ $# -gt 1 ]; then
+        shift
+        export GOSH_SUBMENU_ARGS="$@"
+    fi
     # output a script header
     local SCRIPT=$(basename "$_SCRIPT")
     echo -n "("
     echo_hl "$SCRIPT"
     echo ")"
     echo
-    echo $@
-    ./"$_SCRIPT" $@
+    ./"$_SCRIPT"
     EC=$?
     drain_stdin
+    unset GOSH_SUBMENU_ARGS
     return $EC
 }
 
@@ -369,6 +372,9 @@ function args() {
 redefine_scripts
 if [ $# -gt 0 ]; then
     args "$@"
+elif [ ! -z "$GOSH_SUBMENU_ARGS" ]; then
+    read -a ARGS_ARR <<< "$GOSH_SUBMENU_ARGS"
+    args "${ARGS_ARR[@]}"
 else
     echo
     echo "Usage: <menu item>..."
