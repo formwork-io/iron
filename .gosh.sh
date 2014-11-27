@@ -35,3 +35,24 @@ function assert_env {
     return 0
 }
 
+# Prompts the user to set a variable if it does not have a default value.
+# E.g.,
+#    prompt_env VERSION "VERSION is not set, please set it now: "
+function prompt_env {
+    if [ $# -ne 2 ]; then
+        echo "usage: prompt_env <variable> <prompt>"
+        echo "(got: $@)"
+        exit 1
+    fi
+    eval __=\$$1
+    if [ -z "$__" ]; then
+        read -p "$2" REPLY
+        if [ -z "$REPLY" ]; then
+            echo "noo response" 1>&2
+            return 1
+        fi
+        export $1="$REPLY"
+    fi
+    return 0
+}
+
