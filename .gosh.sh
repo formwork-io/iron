@@ -48,10 +48,31 @@ function prompt_env {
     if [ -z "$__" ]; then
         read -p "$2" REPLY
         if [ -z "$REPLY" ]; then
-            echo "noo response" 1>&2
+            echo "no response" 1>&2
             return 1
         fi
         export $1="$REPLY"
+    fi
+    return 0
+}
+
+# Sources the file named $1, if readable. The return code of the source
+# operation is returned to allow for failure conditions when sourcing a
+# file fails for any reason.
+# E.g.,
+#    assert_source template.sh
+function assert_source {
+    if [ $# -ne 1 ]; then
+        echo "usage: assert_source <file>"
+        echo "(got: $@)"
+        exit 1
+    fi
+    if [ -r "$1" ]; then
+        source "$1"
+        RC=$?
+        if [ $RC -ne 0 ]; then
+            return $RC
+        fi
     fi
     return 0
 }
