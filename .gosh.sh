@@ -71,6 +71,7 @@ function assert_source {
         source "$1"
         RC=$?
         if [ $RC -ne 0 ]; then
+            echo "assert_source: source failure in $1; returned $RC" 1>&2
             return $RC
         fi
     fi
