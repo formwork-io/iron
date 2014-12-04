@@ -127,13 +127,13 @@ codebase::
 
     cd my-project
     wget --content-disposition \
-         https://raw.githubusercontent.com/formwork-io/gosh/master/overlay.sh
+         https://raw.githubusercontent.com/formwork-io/gosh/latest/overlay.sh
     bash overlay.sh
 
 Take a look at your version control status (e.g., ``git status``) to see
 exactly what the effect was.
 
-.. _overlay: https://raw.githubusercontent.com/formwork-io/gosh/master/overlay.sh
+.. _overlay: https://raw.githubusercontent.com/formwork-io/gosh/latest/overlay.sh
 
 
 Use It
