@@ -18,6 +18,24 @@ function default {
     fi
 }
 
+# Default a variable named $1 to $2 unless already set,
+# and be verbose about it. This is a verbose variant of
+# the default function.
+# E.g.,
+#    vdefault foo bar
+function vdefault {
+    if [ $# -ne 2 ]; then
+        echo "usage: vdefault <variable> <default value>"
+        echo "(got: $@)"
+        exit 1
+    fi
+    eval __=\$$1
+    if [ -z "$__" ]; then
+        echo "Variable \"$1\" is being defaulted to \"$2\"."
+        export $1="$2"
+    fi
+}
+
 # Returns 1 if the environment variable $1 is not set, 0 otherwise.
 # E.g.,
 #    assert_env PATH
