@@ -96,3 +96,19 @@ function assert_source {
     return 0
 }
 
+# Returns 1 if the command $1 is not found, 0 otherwise.
+# E.g.,
+#    require_cmd realpath
+function require_cmd {
+    if [ $# -ne 1 ]; then
+        echo "usage: require_cmd <command>" >&2
+        echo "(got: $@)" >&2
+        exit 1
+    fi
+    _=$(which "$1" >/dev/null 2>&1)
+    if [ $? -eq 1 ]; then
+        echo "$1: command not found (and it is required)" 2>&2
+        return 1
+    fi
+    return 0
+}
