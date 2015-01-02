@@ -8,8 +8,8 @@
 #    export FOO="${FOO:=$BAR}"
 function default {
     if [ $# -ne 2 ]; then
-        echo "usage: default <variable> <default value>"
-        echo "(got: $@)"
+        echo "usage: default <variable> <default value>" >&2
+        echo "(got: $@)" >&2
         exit 1
     fi
     eval __=\$$1
@@ -25,8 +25,8 @@ function default {
 #    vdefault foo bar
 function vdefault {
     if [ $# -ne 2 ]; then
-        echo "usage: vdefault <variable> <default value>"
-        echo "(got: $@)"
+        echo "usage: vdefault <variable> <default value>" >&2
+        echo "(got: $@)" >&2
         exit 1
     fi
     eval __=\$$1
@@ -41,8 +41,8 @@ function vdefault {
 #    assert_env PATH
 function assert_env {
     if [ $# -ne 1 ]; then
-        echo "usage: assert_env <variable>"
-        echo "(got: $@)"
+        echo "usage: assert_env <variable>" >&2
+        echo "(got: $@)" >&2
         exit 1
     fi
     eval __=\$$1
@@ -58,15 +58,15 @@ function assert_env {
 #    prompt_env VERSION "VERSION is not set, please set it now: "
 function prompt_env {
     if [ $# -ne 2 ]; then
-        echo "usage: prompt_env <variable> <prompt>"
-        echo "(got: $@)"
+        echo "usage: prompt_env <variable> <prompt>" >&2
+        echo "(got: $@)" >&2
         exit 1
     fi
     eval __=\$$1
     if [ -z "$__" ]; then
         read -p "$2" REPLY
         if [ -z "$REPLY" ]; then
-            echo "no response" 1>&2
+            echo "no response" >&2
             return 1
         fi
         export $1="$REPLY"
