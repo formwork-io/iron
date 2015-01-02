@@ -81,15 +81,15 @@ function prompt_env {
 #    assert_source template.sh
 function assert_source {
     if [ $# -ne 1 ]; then
-        echo "usage: assert_source <file>"
-        echo "(got: $@)"
+        echo "usage: assert_source <file>" >&2
+        echo "(got: $@)" >&2
         exit 1
     fi
     if [ -r "$1" ]; then
         source "$1"
         RC=$?
         if [ $RC -ne 0 ]; then
-            echo "assert_source: source failure in $1; returned $RC" 1>&2
+            echo "assert_source: source failure in $1; returned $RC" >&2
             return $RC
         fi
     fi
