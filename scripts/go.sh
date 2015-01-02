@@ -34,7 +34,7 @@ export GOSH_DIR GOSH_PATH GOSH_SCRIPTS
 cd "$GOSH_SCRIPTS" || exit 1
 
 # GOSH_PROMPT: go shell prompt.
-GOSH_PROMPT=${GOSH_PROMPT:="gosh (?|#|#?)> "}
+GOSH_PROMPT=${GOSH_PROMPT:="gosh (?|#|#?|!)> "}
 
 function header {
     echo "gosh: the go shell"
@@ -100,6 +100,10 @@ function source_script {
 
 function warn_item() {
     echo -e "\nMenu items are between 1 and $NUM_SCRIPTS."
+}
+
+function warn_no_previous() {
+    echo -e "\nNo previous selection."
 }
 
 # Prints help.
@@ -194,7 +198,7 @@ function script {
 #
 #     HELP
 #            SCRIPT_HELP
-#     
+#
 #     EXTENDED HELP
 #            SCRIPT_EXTENDED_HELP
 #
@@ -268,6 +272,8 @@ function process_input() {
         local extended=0
         # set to 1 when submenu argcall requested
         local submenu=0
+        # set to 1 when previous item requested
+        local previous=0
         # set to 1 when item requested
         local item=0
 
@@ -278,11 +284,14 @@ function process_input() {
         elif (is_submenu_argcall "$TOKEN"); then
             submenu=1
 
+        elif [ "$TOKEN" == "!" ]; then
+            previous=1
+
         # does $TOKEN look like the user requested a menu item?
         elif (is_item "$TOKEN"); then
             item=1
 
-        # doesn't look like extended help or a menu item...
+        # input not recognized
         else
             warn_item
             # discard all remaining input
@@ -295,6 +304,16 @@ function process_input() {
         if [ "$submenu" -eq 1 ]; then
             ARGS=$(echo "$TOKEN" | grep -o ",[,0-9]*" | tr ',' ' ')
             TOKEN=$(echo "$TOKEN" | grep -o "^[[:digit:]]*," | tr -d ',')
+        fi
+
+        if [ "$previous" -eq 1 ]; then
+            if [ -z "$LASTCMD" ]; then
+                warn_no_previous
+                # discard all remaining input
+                break
+            fi
+            item=1
+            TOKEN=$LASTCMD
         fi
 
         # does $TOKEN fall outside the range of menu items?
