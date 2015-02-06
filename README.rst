@@ -6,6 +6,9 @@ the go shell
 
 **This is free software with ABSOLUTELY NO WARRANTY.**
 
+.. image:: https://travis-ci.org/formwork-io/gosh.svg?branch=master
+    :target: https://travis-ci.org/formwork-io/gosh
+
 Even in all its glory, your codebase will inevitably make you want to gouge
 your eyes out. It will demand you recite arcane incantations. You will need to
 coax it to finish a simple task. It will be best friends with your teammates
