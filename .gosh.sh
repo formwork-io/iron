@@ -2,6 +2,12 @@
 
 # Return 0 if $1 is a set variable, 1 otherwise.
 function _g_varset {
+    if [ $# -ne 1 ]; then
+        local me=FUNCNAME
+        echo "usage: ${!me} <var>" >&2
+        echo "(got: $@)" >&2
+        exit 1
+    fi
     local var="$1"
     if [[ ! ${!var} && ${!var-unset} ]]; then
         return 1
@@ -11,11 +17,78 @@ function _g_varset {
 
 # Return 0 if $1 is not a set variable, 1 otherwise.
 function _g_varunset {
+    if [ $# -ne 1 ]; then
+        local me=FUNCNAME
+        echo "usage: ${!me} <var>" >&2
+        echo "(got: $@)" >&2
+        exit 1
+    fi
     local var="$1"
     if [[ ! ${!var} && ${!var-unset} ]]; then
         return 0
     fi
     return 1
+}
+
+# Returns 0 if $1 is in PATH, 1 otherwise.
+function _g_in_path {
+    if [ $# -ne 1 ]; then
+        local me=FUNCNAME
+        echo "usage: ${!me} <path>" >&2
+        echo "(got: $@)" >&2
+        exit 1
+    fi
+    # PATH -> to array
+    local path_array
+    OLDIFS=$IFS
+    IFS=":" path_array=($PATH)
+    IFS=$OLDIFS
+    for path in "${path_array[@]}"; do
+        if [ "$path" == "$1" ]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+# Adds $1 to PATH, unless it's already there.
+function _g_add_path {
+    if [ $# -ne 1 ]; then
+        local me=FUNCNAME
+        echo "usage: ${!me} <path>" >&2
+        echo "(got: $@)" >&2
+        exit 1
+    fi
+    if ! _g_in_path "$1"; then
+        export PATH="$1":$PATH
+    fi
+}
+
+# Removes $1 from PATH, if it's there.
+function _g_rm_path {
+    if [ $# -ne 1 ]; then
+        local me=FUNCNAME
+        echo "usage: ${!me} <path>" >&2
+        echo "(got: $@)" >&2
+        exit 1
+    fi
+    local new_path=
+    # PATH -> to array
+    local path_array
+    OLDIFS=$IFS
+    IFS=":" path_array=($PATH)
+    IFS=$OLDIFS
+    for path in "${path_array[@]}"; do
+        if [ "$path" == "$1" ]; then
+            continue
+        fi
+        if [ -z "$new_path" ]; then
+            new_path="$path"
+        else
+            new_path="$path:$new_path"
+        fi
+    done
+    export PATH=$new_path
 }
 
 # Default a variable named $1 to $2 unless already set.
