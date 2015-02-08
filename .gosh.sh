@@ -22,16 +22,18 @@ function _g_varunset {
 # This is more readable than expansion syntax.
 # E.g.,
 #    default foo bar
-# vice:
+#
+# This is a less verbose, more readable form of:
 #    export FOO="${FOO:=$BAR}"
+#
 function default {
     if [ $# -ne 2 ]; then
-        echo "usage: default <variable> <default value>" >&2
+        local me=FUNCNAME
+        echo "usage: ${!me} <variable> <default value>" >&2
         echo "(got: $@)" >&2
         exit 1
     fi
-    eval __=\$$1
-    if [ -z "$__" ]; then
+    if _g_varunset "$1"; then
         export $1="$2"
     fi
 }
@@ -41,14 +43,21 @@ function default {
 # the default function.
 # E.g.,
 #    vdefault foo bar
+#
+# This is a less verbose, more readable form of:
+#    if [ -z "$FOO" ]; then
+#        echo "..."
+#        export FOO="${BAR}"
+#    fi
+#
 function vdefault {
     if [ $# -ne 2 ]; then
-        echo "usage: vdefault <variable> <default value>" >&2
+        local me=FUNCNAME
+        echo "usage: ${!me} <variable> <default value>" >&2
         echo "(got: $@)" >&2
         exit 1
     fi
-    eval __=\$$1
-    if [ -z "$__" ]; then
+    if _g_varunset "$1"; then
         echo "Variable \"$1\" is being defaulted to \"$2\"."
         export $1="$2"
     fi
@@ -56,32 +65,48 @@ function vdefault {
 
 # Returns 1 if the environment variable $1 is not set, 0 otherwise.
 # E.g.,
-#    assert_env PATH
-function assert_env {
+#    assert-env PATH
+function assert-env {
     if [ $# -ne 1 ]; then
-        echo "usage: assert_env <variable>" >&2
+        local me=FUNCNAME
+        echo "usage: ${!me} <variable>" >&2
         echo "(got: $@)" >&2
         exit 1
     fi
-    eval __=\$$1
-    if [ -z "$__" ]; then
+    if _g_varunset "$1"; then
         echo "$1 is not set" 1>&2
         return 1
     fi
     return 0
 }
 
-# Prompts the user to set a variable if it does not have a default value.
+# Exits 1 if the environment variable $1 is not set.
 # E.g.,
-#    prompt_env VERSION "VERSION is not set, please set it now: "
-function prompt_env {
-    if [ $# -ne 2 ]; then
-        echo "usage: prompt_env <variable> <prompt>" >&2
+#    assert-env-or-die PATH
+function assert-env-or-die {
+    if [ $# -ne 1 ]; then
+        local me=FUNCNAME
+        echo "usage: ${!me} <variable>" >&2
         echo "(got: $@)" >&2
         exit 1
     fi
-    eval __=\$$1
-    if [ -z "$__" ]; then
+    if _g_varunset "$1"; then
+        echo "$1 is not set" 1>&2
+        exit 1
+    fi
+}
+
+# Prompts the user to set a variable if it does not have a default value.
+# E.g.,
+#    prompt-env VERSION "VERSION is not set, please set it now: "
+function prompt-env {
+    if [ $# -ne 2 ]; then
+        local me=FUNCNAME
+        echo "usage: ${!me} <variable> <prompt>" >&2
+        echo "(got: $@)" >&2
+        exit 1
+    fi
+    if _g_varunset "$1"; then
         read -p "$2" REPLY
         if [ -z "$REPLY" ]; then
             echo "no response" >&2
@@ -94,12 +119,19 @@ function prompt_env {
 
 # Sources the file named $1, if readable. The return code of the source
 # operation is returned to allow for failure conditions when sourcing a
-# file fails for any reason.
+# file.
 # E.g.,
-#    assert_source template.sh
-function assert_source {
+#    assert-source template.sh || exit 1
+#
+# Sourcing a file that does not exist is normally a failure. This function
+# does not. The following example will *not* execute the exit statement.
+# E.g.,
+#    assert-source does-not-exist.sh || exit 1
+#
+function assert-source {
     if [ $# -ne 1 ]; then
-        echo "usage: assert_source <file>" >&2
+        local me=FUNCNAME
+        echo "usage: ${!me} <file>" >&2
         echo "(got: $@)" >&2
         exit 1
     fi
@@ -107,7 +139,8 @@ function assert_source {
         source "$1"
         RC=$?
         if [ $RC -ne 0 ]; then
-            echo "assert_source: source failure in $1; returned $RC" >&2
+            local me=FUNCNAME
+            echo "${!me}: source failure in $1; returned $RC" >&2
             return $RC
         fi
     fi
@@ -116,10 +149,11 @@ function assert_source {
 
 # Returns 1 if the command $1 is not found, 0 otherwise.
 # E.g.,
-#    require_cmd realpath
-function require_cmd {
+#    require-cmd realpath
+function require-cmd {
     if [ $# -ne 1 ]; then
-        echo "usage: require_cmd <command>" >&2
+        local me=FUNCNAME
+        echo "usage: ${!me} <command>" >&2
         echo "(got: $@)" >&2
         exit 1
     fi
@@ -131,12 +165,36 @@ function require_cmd {
     return 0
 }
 
+# Exits 1 if the required command is not found.
+# E.g.,
+#    require-cmd-or-die realpath
+function require-cmd-or-die {
+    if [ $# -ne 1 ]; then
+        local me=FUNCNAME
+        echo "usage: ${!me} <command>" >&2
+        echo "(got: $@)" >&2
+        exit 1
+    fi
+    _=$(which "$1" >/dev/null 2>&1)
+    if [ $? -eq 1 ]; then
+        echo "$1: command not found (and it is required)" 2>&2
+        exit 1
+    fi
+}
+
 # Pull in any GOSH_CONTRIB scripts found.
-function use_gosh_contrib {
-    assert_env GOSH_CONTRIB || return 1
+function use-gosh-contrib {
+    assert-env GOSH_CONTRIB || return 1
     for contrib in "$GOSH_CONTRIB"/*.sh; do
-        assert_source "$contrib" || return 1
+        assert-source "$contrib" || return 1
     done
     return 0
 }
 
+# Exits 1 unless all GOSH_CONTRIB scripts are pulled in.
+function use-gosh-contrib-or-die {
+    assert-env-or-die GOSH_CONTRIB
+    for contrib in "$GOSH_CONTRIB"/*.sh; do
+        assert-source "$contrib" || exit 1
+    done
+}
