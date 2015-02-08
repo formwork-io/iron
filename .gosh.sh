@@ -1,5 +1,23 @@
 #!/usr/bin/env bash
 
+# Return 0 if $1 is a set variable, 1 otherwise.
+function _g_varset {
+    local var="$1"
+    if [[ ! ${!var} && ${!var-unset} ]]; then
+        return 1
+    fi
+    return 0
+}
+
+# Return 0 if $1 is not a set variable, 1 otherwise.
+function _g_varunset {
+    local var="$1"
+    if [[ ! ${!var} && ${!var-unset} ]]; then
+        return 0
+    fi
+    return 1
+}
+
 # Default a variable named $1 to $2 unless already set.
 # This is more readable than expansion syntax.
 # E.g.,
