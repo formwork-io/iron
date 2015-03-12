@@ -169,7 +169,7 @@ function assert-env-or-die {
     fi
 }
 
-# Prompts the user to set a variable if it does not have a default value.
+# Prompt the user to set a variable if it does not have a default value.
 # E.g.,
 #    prompt-env VERSION "VERSION is not set, please set it now: "
 function prompt-env {
@@ -186,6 +186,31 @@ function prompt-env {
             return 1
         fi
         export $1="$REPLY"
+    fi
+    return 0
+}
+
+# Prompt the user to set a variable if it does not have a default value, and
+# be verbose about it.
+# E.g.,
+#    vprompt-env VERSION "VERSION not set, please set it now: " "VERSION is: "
+function vprompt-env {
+    if [ $# -ne 3 ]; then
+        local me=FUNCNAME
+        echo "usage: ${!me} <variable> <prompt> <verbose>" >&2
+        echo "(got: $@)" >&2
+        exit 1
+    fi
+    if _g_varunset "$1"; then
+        read -p "$2" REPLY
+        if [ -z "$REPLY" ]; then
+            echo "no response" >&2
+            return 1
+        fi
+        export $1="$REPLY"
+    else
+        local current=$1
+        echo "${3}\"${!current}\"."
     fi
     return 0
 }
