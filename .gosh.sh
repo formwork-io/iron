@@ -136,6 +136,36 @@ function vdefault {
     fi
 }
 
+# Override the variable named $1 by setting it to $2.
+# This is mostly for consistency with the default function.
+# E.g.,
+#    override foo bar
+function override {
+    if [ $# -ne 2 ]; then
+        local me=FUNCNAME
+        echo "usage: ${!me} <variable> <override value>" >&2
+        echo "(got: $@)" >&2
+        exit 1
+    fi
+    export $1="$2"
+}
+
+# Override the variable named $1 by setting it to $2,
+# and be verbose about it. This is a verbose variant of
+# the override function.
+# E.g.,
+#    voverride foo bar
+function voverride {
+    if [ $# -ne 2 ]; then
+        local me=FUNCNAME
+        echo "usage: ${!me} <variable> <override value>" >&2
+        echo "(got: $@)" >&2
+        exit 1
+    fi
+    echo "Overriding variable \"$1\" and setting it to \"$2\"."
+    export $1="$2"
+}
+
 # Returns 1 if the environment variable $1 is not set, 0 otherwise.
 # E.g.,
 #    assert-env PATH
@@ -169,7 +199,7 @@ function assert-env-or-die {
     fi
 }
 
-# Prompts the user to set a variable if it does not have a default value.
+# Prompt the user to set a variable if it does not have a default value.
 # E.g.,
 #    prompt-env VERSION "VERSION is not set, please set it now: "
 function prompt-env {
@@ -186,6 +216,31 @@ function prompt-env {
             return 1
         fi
         export $1="$REPLY"
+    fi
+    return 0
+}
+
+# Prompt the user to set a variable if it does not have a default value, and
+# be verbose about it.
+# E.g.,
+#    vprompt-env VERSION "VERSION not set, please set it now: " "VERSION is: "
+function vprompt-env {
+    if [ $# -ne 3 ]; then
+        local me=FUNCNAME
+        echo "usage: ${!me} <variable> <prompt> <verbose>" >&2
+        echo "(got: $@)" >&2
+        exit 1
+    fi
+    if _g_varunset "$1"; then
+        read -p "$2" REPLY
+        if [ -z "$REPLY" ]; then
+            echo "no response" >&2
+            return 1
+        fi
+        export $1="$REPLY"
+    else
+        local current=$1
+        echo "${3}\"${!current}\"."
     fi
     return 0
 }
