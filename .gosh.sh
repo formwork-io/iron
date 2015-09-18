@@ -189,7 +189,7 @@ function prepend {
 # already set, it will be set to $2.
 # E.g.,
 #    vprepend $(pwd)/bin PATH
-function vpreprend {
+function vprepend {
     if [ $# -ne 2 ]; then
         local me=FUNCNAME
         echo "usage: ${!me} <variable> <value>" >&2
@@ -218,10 +218,8 @@ function append {
         exit 1
     fi
     if _g_varunset "$1"; then
-        echo "Variable \"$1\" is being set to \"$2\"."
         export $1="$2"
     else
-        echo "Variable \"$1\" is being appended to with \"$2\"."
         local current=$1
         export $1="${!current}:$2"
     fi
