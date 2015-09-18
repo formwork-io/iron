@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 source "$TOP_DIR"/.gosh.sh || exit 1
 
-testAppendPass() {
+testAppendToNew() {
     # assign a random value to our testval
     local testval1="$RANDOM"
-    # default its value to a random variable
-    default _${testval1} $testval1
+    # append its value to a random variable
+    # (creates the new variable)
+    append _${testval1} $testval1
     # capture the dynamically created variable
     local dynamicVar="_$testval1"
     # eval its value
@@ -14,29 +15,48 @@ testAppendPass() {
     assertEquals $testval1 "$actualVal"
 }
 
-testAppendFail() {
-    # assign a string to our testval
-    default testval2 "this works"
-    # try it again
-    default testval2 "this does not"
-    # and assert the second assignment had no effect
-    assertEquals "$testval2" "this works"
+testAppendToExisting() {
+    # assign a random value to our testval
+    local testval2="$RANDOM"
+    # append its value to a random variable
+    # (creates the new variable)
+    append _${testval2} $testval2
+    # append the same value
+    # (append to the existing variable)
+    append _${testval2} ${testval2}FOO
+
+    # capture its value
+    local dynamicVar="_$testval2"
+    # eval its value
+    eval actualVal=\$$dynamicVar
+
+    # and assert the result is what we expect
+    assertEquals "$testval2:${testval2}FOO" "$actualVal"
 }
 
-testVAppendOutput() {
+testVAppendToNew() {
     # shellcheck disable=SC2034
-    OUTPUT=$(vdefault testval3 "loudly proclaim this variable set")
+    OUTPUT=$(vappend testval3 "loudly proclaim this variable set")
     # NOTE testval3 is defaulted in a subshell; it is unavailable
     # we only assert output from the function was generated
     # shellcheck disable=SC2016
     assertTrue "function failed to produce output" '[ ! -z "$OUTPUT" ]'
 }
 
-testAppendEmpty() {
-    # assign an empty string to our testval
-    default testval4 ""
-    # and assert the result is the empty string
-    assertEquals "$testval4" ""
+testVAppendToExisting() {
+    # assign a random value to our testval
+    local testval4="$RANDOM"
+    # append its value to a random variable
+    # (creates the new variable)
+    append _${testval4} $testval4
+
+    # shellcheck disable=SC2034
+    OUTPUT=$(vappend testval4 "loudly proclaim this variable set")
+    # NOTE testval3 is defaulted in a subshell; it is unavailable
+    # we only assert output from the function was generated
+    # shellcheck disable=SC2016
+    assertTrue "function failed to produce output" '[ ! -z "$OUTPUT" ]'
+    echo
 }
 
 . "$(dirname "$BASH_SOURCE[0]")"/shunit2-2.1.6/src/shunit2
