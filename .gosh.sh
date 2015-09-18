@@ -166,6 +166,88 @@ function voverride {
     export $1="$2"
 }
 
+# Prepends $2 to the variable named $1. If $1 is not already set, it will be
+# set to $2.
+# E.g.,
+#    prepend $(pwd)/bin PATH
+function prepend {
+    if [ $# -ne 2 ]; then
+        local me=FUNCNAME
+        echo "usage: ${!me} <variable> <value>" >&2
+        echo "(got: $@)" >&2
+        exit 1
+    fi
+    if _g_varunset "$1"; then
+        export $1="$2"
+    else
+        local current=$1
+        export $1="$2:${!current}"
+    fi
+}
+
+# Prepends $2 to the variable named $1, and be verbose about it. If $1 is not
+# already set, it will be set to $2.
+# E.g.,
+#    vprepend $(pwd)/bin PATH
+function vpreprend {
+    if [ $# -ne 2 ]; then
+        local me=FUNCNAME
+        echo "usage: ${!me} <variable> <value>" >&2
+        echo "(got: $@)" >&2
+        exit 1
+    fi
+    if _g_varunset "$1"; then
+        echo "Variable \"$1\" is being set to \"$2\"."
+        export $1="$2"
+    else
+        echo "Variable \"$1\" is being prepended with \"$2\"."
+        local current=$1
+        export $1="$2:${!current}"
+    fi
+}
+
+# Appends $2 to the variable named $1. If $1 is not already set, it will be
+# set to $2.
+# E.g.,
+#    append $(pwd)/bin PATH
+function append {
+    if [ $# -ne 2 ]; then
+        local me=FUNCNAME
+        echo "usage: ${!me} <variable> <value>" >&2
+        echo "(got: $@)" >&2
+        exit 1
+    fi
+    if _g_varunset "$1"; then
+        echo "Variable \"$1\" is being set to \"$2\"."
+        export $1="$2"
+    else
+        echo "Variable \"$1\" is being appended to with \"$2\"."
+        local current=$1
+        export $1="${!current}:$2"
+    fi
+}
+
+# Prepends $2 to the variable named $1. If $1 is not already set, it will be
+# set to $2.
+# E.g.,
+#    prepend $(pwd)/bin PATH
+function vappend {
+    if [ $# -ne 2 ]; then
+        local me=FUNCNAME
+        echo "usage: ${!me} <variable> <value>" >&2
+        echo "(got: $@)" >&2
+        exit 1
+    fi
+    if _g_varunset "$1"; then
+        echo "Variable \"$1\" is being set to \"$2\"."
+        export $1="$2"
+    else
+        echo "Variable \"$1\" is being appended to with \"$2\"."
+        local current=$1
+        export $1="$2:${!current}"
+    fi
+}
+
 # Returns 1 if the environment variable $1 is not set, 0 otherwise.
 # E.g.,
 #    assert-env PATH
