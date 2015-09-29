@@ -169,7 +169,7 @@ function voverride {
 # Prepends $2 to the variable named $1. If $1 is not already set, it will be
 # set to $2.
 # E.g.,
-#    prepend $(pwd)/bin PATH
+#    prepend PATH $(pwd)/bin
 function prepend {
     if [ $# -ne 2 ]; then
         local me=FUNCNAME
@@ -188,7 +188,7 @@ function prepend {
 # Prepends $2 to the variable named $1, and be verbose about it. If $1 is not
 # already set, it will be set to $2.
 # E.g.,
-#    vprepend $(pwd)/bin PATH
+#    vprepend PATH $(pwd)/bin
 function vprepend {
     if [ $# -ne 2 ]; then
         local me=FUNCNAME
@@ -209,7 +209,7 @@ function vprepend {
 # Appends $2 to the variable named $1. If $1 is not already set, it will be
 # set to $2.
 # E.g.,
-#    append $(pwd)/bin PATH
+#    append PATH $(pwd)/bin
 function append {
     if [ $# -ne 2 ]; then
         local me=FUNCNAME
@@ -228,7 +228,7 @@ function append {
 # Prepends $2 to the variable named $1. If $1 is not already set, it will be
 # set to $2.
 # E.g.,
-#    prepend $(pwd)/bin PATH
+#    prepend PATH $(pwd)/bin
 function vappend {
     if [ $# -ne 2 ]; then
         local me=FUNCNAME
