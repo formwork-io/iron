@@ -251,13 +251,17 @@ function menu_short() {
 
 function menu_long() {
     declare -i i=0
+    # item number padding
+    local pad1="${PADDING}"
+    # script name padding
+    local pad2="${SCRIPT_NAME_MAX_LEN}"
+
     while [ $i -lt $NUM_SCRIPTS ]; do
         source_script "${SCRIPTS[$i]}"
         declare -i LASTCMD=${LASTCMD:-0}
-        local _name=$(strip_color "$SCRIPT_NAME")
-        local _help=$(strip_color "$SCRIPT_HELP")
-        _help="$SCRIPT_HELP"
-        ITEM=$(printf "%${PADDING}s %-${SCRIPT_NAME_MAX_LEN}s %s" "$((i+1)):" "$_name" "$_help")
+        local name=$(strip_color "$SCRIPT_NAME")
+        local help=$(strip_color "$SCRIPT_HELP")
+        ITEM=$(printf "%${pad1}s %-${pad2}s %s" "$((i+1)):" "$name" "$help")
         if [ "$((LASTCMD))" -eq "$((i + 1))" ]; then
             echo_hl "$ITEM"
             echo
