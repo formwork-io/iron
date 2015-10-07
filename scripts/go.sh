@@ -49,12 +49,22 @@ function redefine_scripts {
     SCRIPTS=($(find "$GOSH_SCRIPTS" -maxdepth 1 -executable \
               -regex '.*/[0-9]+-.*\.sh' -exec basename {} \; | sort))
     NUM_SCRIPTS="${#SCRIPTS[@]}"
-    PADDING=$(echo -n "$NUM_SCRIPTS:" | wc -c)
+    PADDING=$(echo -n " $NUM_SCRIPTS:" | wc -c)
     if [ "$NUM_SCRIPTS" -eq 0 ]; then
         echo "No scripts found."
         echo "See https://github.com/formwork-io/gosh."
         exit 1
     fi
+
+    declare -i i=0
+    declare -i max=0
+    while [ $i -lt $NUM_SCRIPTS ]; do
+        source_script "${SCRIPTS[$i]}"
+        len=${#SCRIPT_NAME}
+        if [ $len -gt $max ]; then max=$len; fi
+        i=$i+1
+    done
+    SCRIPT_NAME_MAX_LEN=$(($max+2))
 }
 
 # Returns 0 if $1 looks like help being requested for a script, 1 otherwise.
@@ -244,10 +254,10 @@ function menu_long() {
     while [ $i -lt $NUM_SCRIPTS ]; do
         source_script "${SCRIPTS[$i]}"
         declare -i LASTCMD=${LASTCMD:-0}
-        SCRIPT_NAME=$(strip_color "$SCRIPT_NAME")
-        SCRIPT_HELP=$(strip_color "$SCRIPT_HELP")
-        ITEM=$(printf "%${PADDING}s" "$((i + 1)):")
-        ITEM="$ITEM $SCRIPT_NAME:\t$SCRIPT_HELP"
+        local _name=$(strip_color "$SCRIPT_NAME")
+        local _help=$(strip_color "$SCRIPT_HELP")
+        _help="$SCRIPT_HELP"
+        ITEM=$(printf "%${PADDING}s %-${SCRIPT_NAME_MAX_LEN}s %s" "$((i+1)):" "$_name" "$_help")
         if [ "$((LASTCMD))" -eq "$((i + 1))" ]; then
             echo_hl "$ITEM"
             echo
