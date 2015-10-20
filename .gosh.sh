@@ -246,6 +246,76 @@ function vappend {
     fi
 }
 
+# Returns 1 if the environment variable $1 is in PATH, 0 otherwise.
+# E.g.,
+#    in-path $HOME/bin
+function in-path {
+    if [ $# -ne 1 ]; then
+        local me=FUNCNAME
+        echo "usage: ${!me} <var>" >&2
+        echo "(got: $@)" >&2
+        exit 1
+    fi
+    if [[ ":$PATH:" == *":$1:"* ]]; then
+        return 0
+    fi
+    return 1
+}
+
+# Returns 1 if the environment variable $1 is in PATH, 0 otherwise.
+# This is a verbose variant of the in-path function.
+# E.g.,
+#    vin-path $HOME/bin
+function vin-path {
+    if [ $# -ne 1 ]; then
+        local me=FUNCNAME
+        echo "usage: ${!me} <var>" >&2
+        echo "(got: $@)" >&2
+        exit 1
+    fi
+    if [[ ":$PATH:" == *":$1:"* ]]; then
+        echo "PATH contains \"$1\"."
+        return 0
+    fi
+    echo "PATH does not contain \"$1\"."
+    return 1
+}
+
+# Returns 1 if the environment variable $1 is not in PATH, 0 otherwise.
+# E.g.,
+#    not-in-path $HOME/bin
+function not-in-path {
+    if [ $# -ne 1 ]; then
+        local me=FUNCNAME
+        echo "usage: ${!me} <var>" >&2
+        echo "(got: $@)" >&2
+        exit 1
+    fi
+    if [[ ":$PATH:" == *":$1:"* ]]; then
+        return 1
+    fi
+    return 0
+}
+
+# Returns 1 if the environment variable $1 is not in PATH, 0 otherwise.
+# This is a verbose variant of the not-in-path function.
+# E.g.,
+#    vnot-in-path $HOME/bin
+function vnot-in-path {
+    if [ $# -ne 1 ]; then
+        local me=FUNCNAME
+        echo "usage: ${!me} <var>" >&2
+        echo "(got: $@)" >&2
+        exit 1
+    fi
+    if [[ ":$PATH:" == *":$1:"* ]]; then
+        echo "PATH contains \"$1\"."
+        return 1
+    fi
+    echo "PATH does not contain \"$1\"."
+    return 0
+}
+
 # Returns 1 if the environment variable $1 is not set, 0 otherwise.
 # E.g.,
 #    assert-env PATH
