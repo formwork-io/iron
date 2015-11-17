@@ -476,3 +476,53 @@ function use-gosh-contrib-or-die {
         assert-source "$contrib" || exit 1
     done
 }
+
+# Returns 0 unless the $@ command fails. If the command fails, exit with a
+# status of 1. All stdout/stderr output from the command will be sent to
+# /dev/null.
+# E.g.,
+#    run-or-die /bin/false
+#    echo "This message will never be displayed."
+function run-or-die {
+    "$@" &>/dev/null
+    local RC=$?
+    [[ $RC -ne 0 ]] && exit 1
+    return 0
+}
+
+# Returns 0 unless the $@ command fails. If the command fails, exit with a
+# status of 1. All stdout/stderr output from the command will be buffered to a
+# temporary file. On failure, the buffer contents are displayed on stderr prior
+# to exiting. This is a verbose variant of the run-or-die function.
+# E.g.,
+#    vrun-or-die /bin/false
+#    echo "This message will never be displayed."
+function vrun-or-die {
+    echo "Running \"$@\"."
+    local buffile="$(mktemp)"
+    # open read mode FD to buffer
+    exec {tempR}<"$buffile"
+    # open write mode FD to buffer
+    exec {tempW}>"$buffile"
+    # delete it to avoid having to cleanup
+    rm "$buffile"
+
+    "$@" >&${tempW} 2>&${tempW}
+    local RC=$?
+
+    # check for nonzero exit status
+    if [ $RC -ne 0 ]; then
+        cat <&${tempR}
+        # close FDs; using '<' or '>' doesn't matter to bash...
+        exec {tempR}<&-
+        # ... but are specified to reflect read/write modes used
+        exec {tempW}>&-
+        exit 1
+    fi
+
+    # close FDs; using '<' or '>' doesn't matter to bash...
+    exec {tempR}<&-
+    # ... but are specified to reflect read/write modes used
+    exec {tempW}>&-
+    return 0
+}
