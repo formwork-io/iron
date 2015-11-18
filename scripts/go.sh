@@ -58,13 +58,13 @@ function redefine_scripts {
 
     declare -i i=0
     declare -i max=0
-    while [ $i -lt $NUM_SCRIPTS ]; do
+    while [ $i -lt "$NUM_SCRIPTS" ]; do
         source_script "${SCRIPTS[$i]}"
         len=${#SCRIPT_NAME}
-        if [ $len -gt $max ]; then max=$len; fi
+        if [ "$len" -gt $max ]; then max=$len; fi
         i=$i+1
     done
-    SCRIPT_NAME_MAX_LEN=$(($max+2))
+    SCRIPT_NAME_MAX_LEN=$((max+2))
 }
 
 # Returns 0 if $1 looks like help being requested for a script, 1 otherwise.
@@ -185,7 +185,8 @@ function script {
         export GOSH_SUBMENU_ARGS="$*"
     fi
     # output a script header
-    local SCRIPT=$(basename "$_SCRIPT")
+    local SCRIPT
+    SCRIPT=$(basename "$_SCRIPT")
     echo -n "("
     echo_hl "$SCRIPT"
     echo ")"
@@ -214,7 +215,8 @@ function script {
 #
 function script_help {
     source_script "$1"
-    local fname=$(basename "$1")
+    local fname
+    fname=$(basename "$1")
     echo     "$fname"
     echo
     echo -e  "\e[1mNAME\e[0m"
@@ -233,12 +235,13 @@ function script_help {
 function menu_short() {
     echo
     declare -i i=0
-    while [ $i -lt $NUM_SCRIPTS ]; do
+    while [ $i -lt "$NUM_SCRIPTS" ]; do
         source_script "${SCRIPTS[$i]}"
         declare -i LASTCMD=${LASTCMD:-0}
         ITEM=$(printf "%${PADDING}s" "$((i + 1)):")
         if [ "$((LASTCMD))" -eq "$((i + 1))" ]; then
-            local NAME=$(strip_color "$SCRIPT_NAME")
+            local NAME
+            NAME=$(strip_color "$SCRIPT_NAME")
             echo_hl "$ITEM $NAME"
             echo
         else
@@ -256,11 +259,13 @@ function menu_long() {
     # script name padding
     local pad2="${SCRIPT_NAME_MAX_LEN}"
 
-    while [ $i -lt $NUM_SCRIPTS ]; do
+    while [ $i -lt "$NUM_SCRIPTS" ]; do
         source_script "${SCRIPTS[$i]}"
         declare -i LASTCMD=${LASTCMD:-0}
-        local name=$(strip_color "$SCRIPT_NAME")
-        local help=$(strip_color "$SCRIPT_HELP")
+        local name
+        name=$(strip_color "$SCRIPT_NAME")
+        local help
+        help=$(strip_color "$SCRIPT_HELP")
         ITEM=$(printf "%${pad1}s %-${pad2}s %s" "$((i+1)):" "$name" "$help")
         if [ "$((LASTCMD))" -eq "$((i + 1))" ]; then
             echo_hl "$ITEM"
@@ -331,7 +336,7 @@ function process_input() {
         fi
 
         # does $TOKEN fall outside the range of menu items?
-        if [ "$TOKEN" -gt $NUM_SCRIPTS ]; then
+        if [ "$TOKEN" -gt "$NUM_SCRIPTS" ]; then
             warn_item
             # discard all remaining input
             break

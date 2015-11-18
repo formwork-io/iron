@@ -5,7 +5,7 @@ function _g_varset {
     if [ $# -ne 1 ]; then
         local me=FUNCNAME
         echo "usage: ${!me} <var>" >&2
-        echo "(got: $@)" >&2
+        echo "(got: $*)" >&2
         exit 1
     fi
     local var="$1"
@@ -20,7 +20,7 @@ function _g_varunset {
     if [ $# -ne 1 ]; then
         local me=FUNCNAME
         echo "usage: ${!me} <var>" >&2
-        echo "(got: $@)" >&2
+        echo "(got: $*)" >&2
         exit 1
     fi
     local var="$1"
@@ -35,7 +35,7 @@ function _g_in_path {
     if [ $# -ne 1 ]; then
         local me=FUNCNAME
         echo "usage: ${!me} <path>" >&2
-        echo "(got: $@)" >&2
+        echo "(got: $*)" >&2
         exit 1
     fi
     # PATH -> to array
@@ -56,7 +56,7 @@ function _g_add_path {
     if [ $# -ne 1 ]; then
         local me=FUNCNAME
         echo "usage: ${!me} <path>" >&2
-        echo "(got: $@)" >&2
+        echo "(got: $*)" >&2
         exit 1
     fi
     if ! _g_in_path "$1"; then
@@ -69,7 +69,7 @@ function _g_rm_path {
     if [ $# -ne 1 ]; then
         local me=FUNCNAME
         echo "usage: ${!me} <path>" >&2
-        echo "(got: $@)" >&2
+        echo "(got: $*)" >&2
         exit 1
     fi
     local new_path=
@@ -103,7 +103,7 @@ function default {
     if [ $# -ne 2 ]; then
         local me=FUNCNAME
         echo "usage: ${!me} <variable> <default value>" >&2
-        echo "(got: $@)" >&2
+        echo "(got: $*)" >&2
         exit 1
     fi
     if _g_varunset "$1"; then
@@ -127,7 +127,7 @@ function vdefault {
     if [ $# -ne 2 ]; then
         local me=FUNCNAME
         echo "usage: ${!me} <variable> <default value>" >&2
-        echo "(got: $@)" >&2
+        echo "(got: $*)" >&2
         exit 1
     fi
     if _g_varunset "$1"; then
@@ -144,7 +144,7 @@ function override {
     if [ $# -ne 2 ]; then
         local me=FUNCNAME
         echo "usage: ${!me} <variable> <override value>" >&2
-        echo "(got: $@)" >&2
+        echo "(got: $*)" >&2
         exit 1
     fi
     export $1="$2"
@@ -159,7 +159,7 @@ function voverride {
     if [ $# -ne 2 ]; then
         local me=FUNCNAME
         echo "usage: ${!me} <variable> <override value>" >&2
-        echo "(got: $@)" >&2
+        echo "(got: $*)" >&2
         exit 1
     fi
     echo "Overriding variable \"$1\" and setting it to \"$2\"."
@@ -174,7 +174,7 @@ function prepend {
     if [ $# -ne 2 ]; then
         local me=FUNCNAME
         echo "usage: ${!me} <variable> <value>" >&2
-        echo "(got: $@)" >&2
+        echo "(got: $*)" >&2
         exit 1
     fi
     if _g_varunset "$1"; then
@@ -193,7 +193,7 @@ function vprepend {
     if [ $# -ne 2 ]; then
         local me=FUNCNAME
         echo "usage: ${!me} <variable> <value>" >&2
-        echo "(got: $@)" >&2
+        echo "(got: $*)" >&2
         exit 1
     fi
     if _g_varunset "$1"; then
@@ -214,7 +214,7 @@ function append {
     if [ $# -ne 2 ]; then
         local me=FUNCNAME
         echo "usage: ${!me} <variable> <value>" >&2
-        echo "(got: $@)" >&2
+        echo "(got: $*)" >&2
         exit 1
     fi
     if _g_varunset "$1"; then
@@ -233,7 +233,7 @@ function vappend {
     if [ $# -ne 2 ]; then
         local me=FUNCNAME
         echo "usage: ${!me} <variable> <value>" >&2
-        echo "(got: $@)" >&2
+        echo "(got: $*)" >&2
         exit 1
     fi
     if _g_varunset "$1"; then
@@ -253,7 +253,7 @@ function in-path {
     if [ $# -ne 1 ]; then
         local me=FUNCNAME
         echo "usage: ${!me} <var>" >&2
-        echo "(got: $@)" >&2
+        echo "(got: $*)" >&2
         exit 1
     fi
     if [[ ":$PATH:" == *":$1:"* ]]; then
@@ -270,7 +270,7 @@ function vin-path {
     if [ $# -ne 1 ]; then
         local me=FUNCNAME
         echo "usage: ${!me} <var>" >&2
-        echo "(got: $@)" >&2
+        echo "(got: $*)" >&2
         exit 1
     fi
     if [[ ":$PATH:" == *":$1:"* ]]; then
@@ -288,7 +288,7 @@ function not-in-path {
     if [ $# -ne 1 ]; then
         local me=FUNCNAME
         echo "usage: ${!me} <var>" >&2
-        echo "(got: $@)" >&2
+        echo "(got: $*)" >&2
         exit 1
     fi
     if [[ ":$PATH:" == *":$1:"* ]]; then
@@ -305,7 +305,7 @@ function vnot-in-path {
     if [ $# -ne 1 ]; then
         local me=FUNCNAME
         echo "usage: ${!me} <var>" >&2
-        echo "(got: $@)" >&2
+        echo "(got: $*)" >&2
         exit 1
     fi
     if [[ ":$PATH:" == *":$1:"* ]]; then
@@ -323,7 +323,7 @@ function assert-env {
     if [ $# -ne 1 ]; then
         local me=FUNCNAME
         echo "usage: ${!me} <variable>" >&2
-        echo "(got: $@)" >&2
+        echo "(got: $*)" >&2
         exit 1
     fi
     if _g_varunset "$1"; then
@@ -340,7 +340,7 @@ function assert-env-or-die {
     if [ $# -ne 1 ]; then
         local me=FUNCNAME
         echo "usage: ${!me} <variable>" >&2
-        echo "(got: $@)" >&2
+        echo "(got: $*)" >&2
         exit 1
     fi
     if _g_varunset "$1"; then
@@ -356,7 +356,7 @@ function prompt-env {
     if [ $# -ne 2 ]; then
         local me=FUNCNAME
         echo "usage: ${!me} <variable> <prompt>" >&2
-        echo "(got: $@)" >&2
+        echo "(got: $*)" >&2
         exit 1
     fi
     if _g_varunset "$1"; then
@@ -378,7 +378,7 @@ function vprompt-env {
     if [ $# -ne 3 ]; then
         local me=FUNCNAME
         echo "usage: ${!me} <variable> <prompt> <verbose>" >&2
-        echo "(got: $@)" >&2
+        echo "(got: $*)" >&2
         exit 1
     fi
     if _g_varunset "$1"; then
@@ -410,7 +410,7 @@ function assert-source {
     if [ $# -ne 1 ]; then
         local me=FUNCNAME
         echo "usage: ${!me} <file>" >&2
-        echo "(got: $@)" >&2
+        echo "(got: $*)" >&2
         exit 1
     fi
     if [ -r "$1" ]; then
@@ -432,7 +432,7 @@ function require-cmd {
     if [ $# -ne 1 ]; then
         local me=FUNCNAME
         echo "usage: ${!me} <command>" >&2
-        echo "(got: $@)" >&2
+        echo "(got: $*)" >&2
         exit 1
     fi
     _=$(which "$1" >/dev/null 2>&1)
@@ -450,7 +450,7 @@ function require-cmd-or-die {
     if [ $# -ne 1 ]; then
         local me=FUNCNAME
         echo "usage: ${!me} <command>" >&2
-        echo "(got: $@)" >&2
+        echo "(got: $*)" >&2
         exit 1
     fi
     _=$(which "$1" >/dev/null 2>&1)
