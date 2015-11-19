@@ -526,3 +526,23 @@ function vrun-or-die {
     exec {tempW}>&-
     return 0
 }
+
+# Returns 0 unless $? is 0. Exit with a status of 1 if $? is nonzero. An
+# optional $1 argument can be provided to specify a different exit status.
+# E.g.,
+#    rslt=$(exit 42)
+#    if-failed-die 2
+#    # exit with status 2
+#
+#    rslt=$(exit 0)
+#    if-failed-die
+#    # no exit - previous command succeeds
+function if-failed-die {
+    local cmd_status=$?
+    local exit_code=1
+    if [ $# -eq 1 ]; then exit_code="$1"; fi
+    if [ "$cmd_status" -eq 0 ]; then
+        return 0
+    fi
+    exit $exit_code
+}
