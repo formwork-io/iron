@@ -11,7 +11,7 @@ you can reuse functionality across scripts in a simple way.
 # Normal script execution starts here.
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"/../
 source "$DIR"/env.sh || exit 1
-use_gosh_contrib || exit 1
+use-gosh-contrib || exit 1
 echo "Calling 'Hello, world!' contrib function."
 # Call the function provided by the example contrib script.
 contrib_hello_world
