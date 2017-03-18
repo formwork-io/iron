@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-source "$TOP_DIR"/.gosh.sh || exit 1
+source "$TOP_DIR"/.iron.sh || exit 1
 
 testRunSuccess() {
     rslt=$(run-or-die true)

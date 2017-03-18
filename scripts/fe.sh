@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
-# gosh: the go shell
-# https://github.com/formwork-io/gosh
+# iron: the fe shell
+# https://github.com/formwork-io/iron
 #
 # Copyright (c) 2014 Nick Bargnesi
 #
@@ -26,33 +26,33 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 #
-GOSH_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-GOSH_PATH="$GOSH_DIR"/"$(basename "$0")"
-GOSH_SCRIPTS="${GOSH_SCRIPTS:=$GOSH_DIR}"
-export GOSH_DIR GOSH_PATH GOSH_SCRIPTS
-# Execute from GOSH_SCRIPTS
-cd "$GOSH_SCRIPTS" || exit 1
+IRON_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+IRON_PATH="$IRON_DIR"/"$(basename "$0")"
+IRON_SCRIPTS="${IRON_SCRIPTS:=$IRON_DIR}"
+export IRON_DIR IRON_PATH IRON_SCRIPTS
+# Execute from IRON_SCRIPTS
+cd "$IRON_SCRIPTS" || exit 1
 
-# GOSH_PROMPT: go shell prompt.
-GOSH_PROMPT=${GOSH_PROMPT:="gosh (?|#|#?|!)> "}
+# IRON_PROMPT: fe shell prompt.
+IRON_PROMPT=${IRON_PROMPT:="iron (?|#|#?|!)> "}
 
 function header {
-    echo "gosh: the go shell"
-    echo "https://github.com/formwork-io/gosh"
+    echo "iron: the fe shell"
+    echo "https://github.com/formwork-io/iron"
     echo "This is free software with ABSOLUTELY NO WARRANTY."
 }
 header
 
 # Defines the SCRIPTS array for use everywhere else.
 function redefine_scripts {
-    # How go shell scripts are found.
-    SCRIPTS=($(find "$GOSH_SCRIPTS" -maxdepth 1 -executable \
+    # How fe shell scripts are found.
+    SCRIPTS=($(find "$IRON_SCRIPTS" -maxdepth 1 -executable \
               -regex '.*/[0-9]+-.*\.sh' -exec basename {} \; | sort))
     NUM_SCRIPTS="${#SCRIPTS[@]}"
     PADDING=$(echo -n " $NUM_SCRIPTS:" | wc -c)
     if [ "$NUM_SCRIPTS" -eq 0 ]; then
         echo "No scripts found."
-        echo "See https://github.com/formwork-io/gosh."
+        echo "See https://github.com/formwork-io/iron."
         exit 1
     fi
 
@@ -94,9 +94,9 @@ function is_item {
 # Source script $1, defaulting VARS as needed.
 function source_script {
     unset SCRIPT_NAME SCRIPT_HELP SCRIPT_EXTENDED_HELP
-    export GOGO_GOSH_SOURCE=1
+    export GOGO_IRON_SOURCE=1
     source "$1"
-    unset GOGO_GOSH_SOURCE
+    unset GOGO_IRON_SOURCE
     if [ -z "$SCRIPT_NAME" ]; then
         SCRIPT_NAME="$(basename "$1")"
     fi
@@ -129,22 +129,22 @@ function help {
     echo -en "visciously stab you behind your back when you need it most. "
     echo -en "It will be the\nbicycle you forget how to ride.\n"
     echo
-    echo -en "The go shell will let you keep your eyes. You can forget the "
+    echo -en "The fe shell will let you keep your eyes. You can forget the "
     echo -en "incantations. It\nwill do the coaxing, be your friend, and "
     echo -en "show you where the bicycle's pedals\nare lest you forget.\n"
     echo
     echo -en "Your scripts, if you have any, are listed below. Enter the "
-    echo -en "items you want and\nthe go shell will execute them in order. "
+    echo -en "items you want and\nthe fe shell will execute them in order. "
     echo -en "Should anything fail, execution stops.\nThe last menu item "
     echo -en "chosen will be highlighted.\n"
     echo
-    echo -en "See https://github.com/formwork-io/gosh for more.\n"
+    echo -en "See https://github.com/formwork-io/iron for more.\n"
     echo "--"
 }
 
 # Resets the prompt.
 function reset_prompt {
-    PROMPT="\n${GOSH_PROMPT}"
+    PROMPT="\n${IRON_PROMPT}"
 }
 
 reset_prompt
@@ -182,7 +182,7 @@ function script {
     local _SCRIPT="$1"
     if [ $# -gt 1 ]; then
         shift
-        export GOSH_SUBMENU_ARGS="$*"
+        export IRON_SUBMENU_ARGS="$*"
     fi
     # output a script header
     local SCRIPT
@@ -194,7 +194,7 @@ function script {
     ./"$_SCRIPT"
     EC=$?
     drain_stdin
-    unset GOSH_SUBMENU_ARGS
+    unset IRON_SUBMENU_ARGS
     return $EC
 }
 
@@ -362,7 +362,7 @@ function process_input() {
 
             LASTCMD=$((TOKEN))
             if [ "$EC" -ne 0 ]; then
-                PROMPT="\n($CHOICE failed)\n${GOSH_PROMPT}"
+                PROMPT="\n($CHOICE failed)\n${IRON_PROMPT}"
                 # stop here, last CHOICE failed
                 break
             fi
@@ -410,8 +410,8 @@ function args() {
 redefine_scripts
 if [ $# -gt 0 ]; then
     args "$@"
-elif [ ! -z "$GOSH_SUBMENU_ARGS" ]; then
-    read -a ARGS_ARR <<< "$GOSH_SUBMENU_ARGS"
+elif [ ! -z "$IRON_SUBMENU_ARGS" ]; then
+    read -a ARGS_ARR <<< "$IRON_SUBMENU_ARGS"
     args "${ARGS_ARR[@]}"
 else
     echo

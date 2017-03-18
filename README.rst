@@ -1,13 +1,13 @@
-gosh
+Iron
 ====
 
-the go shell
+the fe shell
 ------------
 
 **This is free software with ABSOLUTELY NO WARRANTY.**
 
-.. image:: https://travis-ci.org/formwork-io/gosh.svg?branch=master
-    :target: https://travis-ci.org/formwork-io/gosh
+.. image:: https://travis-ci.org/formwork-io/iron.svg?branch=master
+    :target: https://travis-ci.org/formwork-io/iron
 
 Even in all its glory, your codebase will inevitably make you want to gouge
 your eyes out. It will demand you recite arcane incantations. You will need to
@@ -15,13 +15,13 @@ coax it to finish a simple task. It will be best friends with your teammates
 and visciously stab you behind your back when you need it most. It will be the
 bicycle you forget how to ride.
 
-The go shell will let you keep your eyes. You can forget the incantations. It
+Iron will let you keep your eyes. You can forget the incantations. It
 will do the coaxing, be your friend, and show you where the bicycle's pedals
 are lest you forget.
 
 Your scripts will be listed in a menu like the examples below. Enter the items
-you want and the go shell will execute them in order. Should anything fail,
-execution stops. The last menu item chosen will be highlighted.
+you want and Iron will execute them in order. Should anything fail, execution
+stops. The last menu item chosen will be highlighted.
 
 .. contents::
 
@@ -32,11 +32,11 @@ Examples
 Example Menu
 ++++++++++++
 
-Here's an example go shell for a codebase with two scripts ``test-success`` and
+Here's an example for a codebase with two scripts ``test-success`` and
 ``test-failure``::
 
-    gosh: the go shell
-    https://github.com/formwork-io/gosh
+    iron: the fe shell
+    https://github.com/formwork-io/iron
     This is free software with ABSOLUTELY NO WARRANTY.
 
     Usage: <menu item>...
@@ -48,14 +48,14 @@ Here's an example go shell for a codebase with two scripts ``test-success`` and
     2: test-failure
 
 
-    gosh (?|#|#?)>
+    iron (?|#|#?)>
 
 Extended Menu
 +++++++++++++
 
 Here's an example showing the same scripts in the extended menu via ``?``::
 
-    gosh (?|#|#?)> ?
+    iron (?|#|#?)> ?
 
     1: test-success:    Mimic a successful script.
     2: test-failure:    Mimic a failing script.
@@ -65,7 +65,7 @@ Script Help
 
 Here's an example showing a script's help via ``1?``::
 
-    gosh (?|#|#?)> 1?
+    iron (?|#|#?)> 1?
 
     1: test-success:    Mimic a successful script.
     2: test-failure:    Mimic a failing script.
@@ -83,18 +83,18 @@ Here's an example showing a script's help via ``1?``::
 Execution Stops on Failure
 ++++++++++++++++++++++++++
 
-The go shell executes scripts in order. Should a script fail, execution will
+The fe shell executes scripts in order. Should a script fail, execution will
 stop. In the following example, the third script is not run as the previous
 script fails::
 
-    gosh (?|#|#?)> 1 2 1
+    iron (?|#|#?)> 1 2 1
     (01-test-success.sh)
     Pretending to do something... SUCCESS
     (02-test-failure.sh)
     Pretending to do something... FAILED
 
     (02-test-failure.sh failed)
-    gosh (?|#|#?)>
+    iron (?|#|#?)>
 
 Try It
 ------
@@ -102,8 +102,8 @@ Try It
 A modern version of the `GNU Bash`_ shell and the `Readline Library`_ wrapper
 `rlwrap`_ are required. Then paste this into your terminal::
 
-    git clone https://github.com/formwork-io/gosh.git
-    cd gosh
+    git clone https://github.com/formwork-io/iron.git
+    cd iron
     ./try-examples.sh
 
 .. _GNU Bash: https://www.gnu.org/software/bash/bash.html
@@ -114,14 +114,14 @@ A modern version of the `GNU Bash`_ shell and the `Readline Library`_ wrapper
 Get It
 ------
 
-The go shell is composed of a few files at the root of your codebase::
+The fe shell is composed of a few files at the root of your codebase::
 
     .
-    |-- .gosh.sh
+    |-- .iron.sh
     |-- env.sh
-    |-- go.sh
+    |-- fe.sh
     \-- scripts
-        |-- go.sh
+        |-- fe.sh
 
     1 directory, 4 files
 
@@ -130,13 +130,13 @@ codebase::
 
     cd my-project
     wget --content-disposition \
-         https://raw.githubusercontent.com/formwork-io/gosh/latest/overlay.sh
+         https://raw.githubusercontent.com/formwork-io/iron/latest/overlay.sh
     bash overlay.sh
 
 Take a look at your version control status (e.g., ``git status``) to see
 exactly what the effect was.
 
-.. _overlay: https://raw.githubusercontent.com/formwork-io/gosh/latest/overlay.sh
+.. _overlay: https://raw.githubusercontent.com/formwork-io/iron/latest/overlay.sh
 
 
 Use It
@@ -160,29 +160,29 @@ the interpreter directive::
     export SCRIPT_NAME="example"
     export SCRIPT_HELP="Short summary of what this script does."
     export SCRIPT_EXTENDED_HELP="Extended help for this script... "
-    [[ "$GOGO_GOSH_SOURCE" -eq 1 ]] && return 0
+    [[ "$GOGO_IRON_SOURCE" -eq 1 ]] && return 0
 
 The variable exports aren't *strictly required* though **the following line
 should absolutely be included**::
 
-    [[ "$GOGO_GOSH_SOURCE" -eq 1 ]] && return 0
+    [[ "$GOGO_IRON_SOURCE" -eq 1 ]] && return 0
 
-This prevents the script from running any further when the go shell sources
+This prevents the script from running any further when the fe shell sources
 the script to create its menus.
 
 
 Customize It
 ------------
 
-GOSH_PROMPT
-  Change the go shell prompt.
+IRON_PROMPT
+  Change the fe shell prompt.
 
   For example::
 
-    GOSH_PROMPT="the go shell: examples> " ./try-examples.sh
+    IRON_PROMPT="the fe shell: examples> " ./try-examples.sh
 
-    gosh: the go shell
-    https://github.com/formwork-io/gosh
+    iron: the fe shell
+    https://github.com/formwork-io/iron
     This is free software with ABSOLUTELY NO WARRANTY.
 
     Usage: <menu item>...
@@ -198,18 +198,18 @@ GOSH_PROMPT
     6: test-close-stdout
     7: test-submenu
 
-    the go shell: examples>
+    the fe shell: examples>
 
-GOSH_SCRIPTS
-  Change where the go shell looks for scripts. For example, here's a go shell
+IRON_SCRIPTS
+  Change where the fe shell looks for scripts. For example, here's a fe shell
   script that behaves like an *admin* submenu::
 
     #!/usr/bin/env bash
     export SCRIPT_HELP="Access administrative menu."
     export SCRIPT_NAME="admin"
-    [[ "$GOGO_GOSH_SOURCE" -eq 1 ]] && return 0
+    [[ "$GOGO_IRON_SOURCE" -eq 1 ]] && return 0
 
     DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    GOSH_SCRIPTS="$DIR"/admin GOSH_PROMPT="admin gosh (?|#|#?)> " $GOSH_PATH
+    IRON_SCRIPTS="$DIR"/admin IRON_PROMPT="admin iron (?|#|#?)> " $IRON_PATH
     exit 0
 
