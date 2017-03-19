@@ -3,7 +3,7 @@
 # iron: the fe shell
 # https://github.com/formwork-io/iron
 #
-# Copyright (c) 2014 Nick Bargnesi
+# Copyright (c) 2014-2017 Nick Bargnesi
 #
 # Permission is hereby granted, free of charge, to any person
 # obtaining a copy of this software and associated documentation
@@ -28,13 +28,35 @@
 #
 IRON_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 IRON_PATH="$IRON_DIR"/"$(basename "$0")"
-IRON_SCRIPTS="${IRON_SCRIPTS:=$IRON_DIR}"
-export IRON_DIR IRON_PATH IRON_SCRIPTS
-# Execute from IRON_SCRIPTS
-cd "$IRON_SCRIPTS" || exit 1
+export IRON_DIR IRON_PATH
 
 # IRON_PROMPT: fe shell prompt.
 IRON_PROMPT=${IRON_PROMPT:="iron (?|#|#?|!)> "}
+
+function find_fesh {
+    cur_path="$(pwd)"
+    while [ "$cur_path" != '/' ]; do
+        if [ -r "$cur_path/.fe.sh" ]; then
+            IRON_FESH_DIR="$cur_path"
+            export IRON_FESH_DIR
+            return 0
+        fi
+        cur_path="$(readlink -f "$cur_path/..")"
+        echo "$cur_path"
+    done
+    IRON_FESH_DIR=""
+    export IRON_FESH_DIR
+    return 1
+}
+
+find_fesh
+fail_msg="fatal: Not an Iron tree, no '.fe.sh' found"
+source "${IRON_FESH_DIR:?$fail_msg}/.fe.sh" || exit 1
+fail_msg="fatal: Missing IRON_SCRIPTS, set it in \"$IRON_FESH_DIR/.fe.sh\""
+IRON_SCRIPTS="${IRON_SCRIPTS:?$fail_msg}"
+export IRON_SCRIPTS
+# Execute from IRON_SCRIPTS
+cd "$IRON_SCRIPTS" || exit 1
 
 function header {
     echo "iron: the fe shell"
