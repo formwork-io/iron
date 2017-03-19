@@ -8,5 +8,5 @@ source env.sh || exit 1
 
 export IRON_CONTRIB="$DIR"/examples/contrib
 
-rlwrap -H .ironhst scripts/fe.sh "$@"
+rlwrap -H .ironhst scripts/fe "$@"
 

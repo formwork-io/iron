@@ -6,12 +6,12 @@
 MAKE_SCRIPTS_DIR=1
 UPGRADE_SCRIPTS_GO=1
 ENV_SH_FOUND=0
-GO_SH_FOUND=0
+FE_SH_FOUND=0
 IRON_SH_FOUND=0
 
 if [ -d scripts ]; then
     MAKE_SCRIPTS_DIR=0
-    if [ ! -r scripts/fe.sh ]; then
+    if [ ! -r scripts/fe ]; then
         UPGRADE_SCRIPTS_GO=0
     fi
 fi
@@ -21,7 +21,7 @@ if [ -r env.sh ]; then
 fi
 
 if [ -r fe.sh ]; then
-    GO_SH_FOUND=1
+    FE_SH_FOUND=1
 fi
 
 if [ -r .iron.sh ]; then
@@ -29,11 +29,11 @@ if [ -r .iron.sh ]; then
 fi
 
 if [ $MAKE_SCRIPTS_DIR -eq 1 ]; then
-    echo "The 'scripts' directory will be created for the main fe.sh script."
+    echo "The 'scripts' directory will be created for the main fe script."
 elif [ $UPGRADE_SCRIPTS_GO -eq 1 ]; then
-    echo "The 'scripts/fe.sh' will be upgraded to the latest version."
+    echo "The 'scripts/fe' will be upgraded to the latest version."
 else
-    echo "The main 'fe.sh' script will be placed in your 'scripts' directory."
+    echo "The main 'fe' script will be placed in your 'scripts' directory."
 fi
 
 if [ $ENV_SH_FOUND -eq 1 ]; then
@@ -43,7 +43,7 @@ else
     echo "The 'env.sh' file will be placed in the current directory."
 fi
 
-if [ $GO_SH_FOUND -eq 1 ]; then
+if [ $FE_SH_FOUND -eq 1 ]; then
     echo "WARNING: An existing 'fe.sh' was found, it will not be modified."
     echo "WARNING: You will need to manually apply any upstream changes!"
 else
@@ -64,10 +64,10 @@ if [ $MAKE_SCRIPTS_DIR -eq 1 ]; then
     mkdir scripts || exit 1
 fi
 
-# The main fe.sh script is *always* created or updated.
-echo -en "Getting main fe.sh script... "
-WGET_OPTS="-q -O scripts/fe.sh"
-WGET_URL="https://raw.githubusercontent.com/formwork-io/iron/master/scripts/fe.sh"
+# The main fe script is *always* created or updated.
+echo -en "Getting main fe script... "
+WGET_OPTS="-q -O scripts/fe"
+WGET_URL="https://raw.githubusercontent.com/formwork-io/iron/master/scripts/fe"
 wget $WGET_OPTS $WGET_URL || exit 1
 echo "done"
 
@@ -81,7 +81,7 @@ if [ $ENV_SH_FOUND -eq 0 ]; then
 fi
 
 # Never update the fe.sh wrapper, only create it
-if [ $GO_SH_FOUND -eq 0 ]; then
+if [ $FE_SH_FOUND -eq 0 ]; then
     echo -en "Getting fe.sh wrapper... "
     WGET_OPTS="-q -O env.sh"
     WGET_OPTS="-q -O fe.sh"
@@ -99,7 +99,7 @@ echo "done"
 
 echo -en "Setting executable bits... "
 chmod +x fe.sh || exit 1
-chmod +x scripts/fe.sh || exit 1
+chmod +x scripts/fe || exit 1
 echo "done"
 
 echo "Overlay complete."
