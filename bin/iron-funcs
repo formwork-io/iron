@@ -3,5 +3,6 @@
 # iron: the fe shell
 # https://github.com/formwork-io/iron
 #
-source "${IRON_DIR:?}/iron-funcs-private"
-source "${IRON_DIR:?}/iron-funcs-public"
+my_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$my_dir/iron-funcs-private"
+source "$my_dir/iron-funcs-public"
