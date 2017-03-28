@@ -30,8 +30,26 @@ IRON_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 IRON_PATH="$IRON_DIR"/"$(basename "$0")"
 IRON_FUNCS="$IRON_DIR/iron-funcs"
 IRON_VERSION="0.9"
+# shellcheck source=/dev/null
 source "$IRON_FUNCS" || exit 1
 export IRON_DIR IRON_PATH IRON_FUNCS
+
+if [ $# -eq 1 ]; then
+    case $1 in
+    path)
+        echo "$IRON_DIR"
+        exit 0
+        ;;
+    funcs)
+        echo "$IRON_FUNCS"
+        exit 0
+        ;;
+    version)
+        echo "$IRON_VERSION"
+        exit 0
+        ;;
+    esac
+fi
 
 # IRON_PROMPT: fe shell prompt.
 IRON_PROMPT=${IRON_PROMPT:="iron (?|#|#?|!)> "}
@@ -54,6 +72,7 @@ function find_dotfe {
 function iron_init {
     find_dotfe
     fail_msg="fatal: Not an Iron tree, no '.fe' found"
+    # shellcheck source=/dev/null
     source "${IRON_FESH_DIR:?$fail_msg}/.fe" || exit 1
     fail_msg="fatal: Missing IRON_SCRIPTS, set it in \"$IRON_FESH_DIR/.fe\""
     IRON_SCRIPTS="${IRON_SCRIPTS:?$fail_msg}"
@@ -79,11 +98,11 @@ function header {
 # Defines the SCRIPTS array for use everywhere else.
 function redefine_scripts {
     # How fe shell scripts are found.
-    SCRIPTS=($(find "$IRON_SCRIPTS" -maxdepth 1 -executable \
-              -regex '.*/[0-9]+-.*\.sh' -exec basename {} \; | sort))
-    NUM_SCRIPTS="${#SCRIPTS[@]}"
-    PADDING=$(echo -n " $NUM_SCRIPTS:" | wc -c)
-    if [ "$NUM_SCRIPTS" -eq 0 ]; then
+    scripts=($(find "$IRON_SCRIPTS" -maxdepth 1 -executable \
+              -regex '.*/[0-9]+-.*\.sh' | sort))
+    num_scripts="${#scripts[@]}"
+    PADDING=$(echo -n " $num_scripts:" | wc -c)
+    if [ "$num_scripts" -eq 0 ]; then
         echo "No scripts found."
         echo "See https://github.com/formwork-io/iron."
         exit 1
@@ -91,8 +110,8 @@ function redefine_scripts {
 
     declare -i i=0
     declare -i max=0
-    while [ $i -lt "$NUM_SCRIPTS" ]; do
-        source_script "${SCRIPTS[$i]}"
+    while [ $i -lt "$num_scripts" ]; do
+        source_script "${scripts[$i]}"
         len=${#SCRIPT_NAME}
         if [ "$len" -gt $max ]; then max=$len; fi
         i=$i+1
@@ -128,7 +147,8 @@ function is_item {
 function source_script {
     unset SCRIPT_NAME SCRIPT_HELP SCRIPT_EXTENDED_HELP
     export GOGO_IRON_SOURCE=1
-    source "$1"
+    # shellcheck source=/dev/null
+    source "$1" || exit 1
     unset GOGO_IRON_SOURCE
     if [ -z "$SCRIPT_NAME" ]; then
         SCRIPT_NAME="$(basename "$1")"
@@ -142,7 +162,7 @@ function source_script {
 }
 
 function warn_item() {
-    echo -e "\nMenu items are between 1 and $NUM_SCRIPTS."
+    echo -e "\nMenu items are between 1 and $num_scripts."
 }
 
 function warn_no_previous() {
@@ -183,8 +203,8 @@ function reset_prompt {
 # Drain the stdin buffer.
 function drain_stdin {
     # any input on stdin?
-    while read -t 0; do
-        read
+    while read -r -t 0; do
+        read -r
     done
 }
 
@@ -222,7 +242,7 @@ function script {
     echo_hl "$SCRIPT"
     echo ")"
     echo
-    ./"$_SCRIPT"
+    "$_SCRIPT"
     EC=$?
     drain_stdin
     unset IRON_SUBMENU_ARGS
@@ -257,8 +277,9 @@ function script_help {
     echo -e  "       $SCRIPT_HELP"
     echo
     echo -e  "\e[1mEXTENDED HELP\e[0m"
-    FOLD_WIDTH=$(($(tput cols) - 14))
-    echo -e "$SCRIPT_EXTENDED_HELP" | fold -sw $FOLD_WIDTH | while read line; do
+    local width
+    width=$(($(tput cols) - 14))
+    echo -e "$SCRIPT_EXTENDED_HELP" | fold -sw $width | while read -r line; do
         echo "       $line"
     done
 }
@@ -266,8 +287,8 @@ function script_help {
 function menu_short() {
     echo
     declare -i i=0
-    while [ $i -lt "$NUM_SCRIPTS" ]; do
-        source_script "${SCRIPTS[$i]}"
+    while [ $i -lt "$num_scripts" ]; do
+        source_script "${scripts[$i]}"
         declare -i LASTCMD=${LASTCMD:-0}
         ITEM=$(printf "%${PADDING}s" "$((i + 1)):")
         if [ "$((LASTCMD))" -eq "$((i + 1))" ]; then
@@ -290,8 +311,8 @@ function menu_long() {
     # script name padding
     local pad2="${SCRIPT_NAME_MAX_LEN}"
 
-    while [ $i -lt "$NUM_SCRIPTS" ]; do
-        source_script "${SCRIPTS[$i]}"
+    while [ $i -lt "$num_scripts" ]; do
+        source_script "${scripts[$i]}"
         declare -i LASTCMD=${LASTCMD:-0}
         local name
         name=$(strip_color "$SCRIPT_NAME")
@@ -367,7 +388,7 @@ function process_input() {
         fi
 
         # does $TOKEN fall outside the range of menu items?
-        if [ "$TOKEN" -gt "$NUM_SCRIPTS" ]; then
+        if [ "$TOKEN" -gt "$num_scripts" ]; then
             warn_item
             # discard all remaining input
             break
@@ -376,7 +397,7 @@ function process_input() {
         # SCRIPTS is a zero-based array so decrement
         # menu item (menu item 1 becomes choice 0)
         local x=$((TOKEN - 1))
-        local CHOICE=${SCRIPTS[$x]} || break
+        local CHOICE=${scripts[$x]} || break
 
         if [ "$extended" -eq 1 ]; then
             # Show extended help
@@ -410,7 +431,7 @@ function loop() {
     menu_short
     while true; do
         echo -en "$PROMPT"
-        read -a REPLY || exit 0
+        read -r -a REPLY || exit 0
         reset_prompt
         if [ "${#REPLY[@]}" -eq 0 ]; then
             menu_short
@@ -446,7 +467,7 @@ redefine_scripts
 if [ $# -gt 0 ]; then
     args "$@"
 elif [ ! -z "$IRON_SUBMENU_ARGS" ]; then
-    read -a ARGS_ARR <<< "$IRON_SUBMENU_ARGS"
+    read -r -a ARGS_ARR <<< "$IRON_SUBMENU_ARGS"
     args "${ARGS_ARR[@]}"
 else
     echo
