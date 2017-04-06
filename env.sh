@@ -10,6 +10,3 @@ assert-source "$CUSTOM_ENV_SH" || return 1
 default DIR             "$DIR"
 default CUSTOM_ENV_SH   "$DIR/env.sh.custom"
 
-### THE GO SHELL ###
-default IRON_SCRIPTS    "$DIR"/scripts
-

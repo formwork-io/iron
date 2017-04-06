@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-source "$TOP_DIR"/.iron.sh || exit 1
+source "$IRON_FUNCS" || exit 1
 
 testPrependToNew() {
     # assign a random value to our testval

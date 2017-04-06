@@ -1,0 +1,3 @@
+my_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+default IRON_SCRIPTS "$my_dir"
+override IRON_VERSION_REQUIRED "0.9"
