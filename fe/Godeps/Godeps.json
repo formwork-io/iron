@@ -1,0 +1,40 @@
+{
+	"ImportPath": "github.com/formwork-io/iron/fe",
+	"GoVersion": "go1.8",
+	"GodepVersion": "v79",
+	"Deps": [
+		{
+			"ImportPath": "github.com/Sirupsen/logrus",
+			"Comment": "v0.11.5-12-g10f801e",
+			"Rev": "10f801ebc38b33738c9d17d50860f484a0988ff5"
+		},
+		{
+			"ImportPath": "github.com/chzyer/readline",
+			"Comment": "v1.4-24-g41eea22",
+			"Rev": "41eea22f717c616615e1e59aa06cf831f9901f35"
+		},
+		{
+			"ImportPath": "github.com/mattn/go-colorable",
+			"Comment": "v0.0.7-24-gded68f7",
+			"Rev": "ded68f7a9561c023e790de24279db7ebf473ea80"
+		},
+		{
+			"ImportPath": "github.com/mattn/go-isatty",
+			"Comment": "v0.0.2",
+			"Rev": "fc9e8d8ef48496124e79ae0df75490096eccf6fe"
+		},
+		{
+			"ImportPath": "github.com/mgutz/ansi",
+			"Rev": "9520e82c474b0a04dd04f8a40959027271bab992"
+		},
+		{
+			"ImportPath": "github.com/x-cray/logrus-prefixed-formatter",
+			"Comment": "v0.3.2",
+			"Rev": "9cd0cf058806896bf8ca66f9a957d36bd9e4ce0f"
+		},
+		{
+			"ImportPath": "golang.org/x/sys/unix",
+			"Rev": "7de4796419dc3b554e6dab3a119a62469569d299"
+		}
+	]
+}
