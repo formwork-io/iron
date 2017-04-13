@@ -442,6 +442,7 @@ function loop() {
                 menu_long | column -t -s '	'
                 continue
             elif [ "${REPLY[0]}" == "help" ]; then
+package main
                 help
                 menu_short
                 continue
