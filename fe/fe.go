@@ -90,6 +90,9 @@ func help() {
 
 func checkVersion(keyValues map[string]string) {
 	version := keyValues[dotfeKeyIronVersion]
+	if version == "" {
+		return
+	}
 	fVersion, err := strconv.ParseFloat(version, 64)
 	panicNonNil(err)
 	if ironVersion < fVersion {
@@ -269,9 +272,10 @@ func printShortMenu(stanzas []ScriptStanza) {
 	const padding = 1
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', 0)
 	num_stanzas := len(stanzas)
+	padlen := 1
 	for i := 0; i < num_stanzas; i++ {
+		ipadlen := padlen - ((i + 1) / 10)
 		stanza := stanzas[i]
-		padlen := strconv.Itoa((i + 1))
 		item := strconv.Itoa(i + 1)
 		name := stanza.name
 		if lastChoice == i+1 {
@@ -281,8 +285,8 @@ func printShortMenu(stanzas []ScriptStanza) {
 			item = ansiNormal(item)
 			name = ansiNormal(name)
 		}
-		item = strings.Repeat(" ", len(padlen)) + item
-		fmt.Fprintf(w, "%s:\t%s\n", item, name)
+		item = strings.Repeat(" ", ipadlen) + item
+		fmt.Fprintf(w, " %s:\t%s\n", item, name)
 	}
 	w.Flush()
 	fmt.Println()
@@ -292,9 +296,11 @@ func printLongMenu(stanzas []ScriptStanza) {
 	fmt.Println()
 	const padding = 1
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', 0)
-	for i := 0; i < len(stanzas); i++ {
+	num_stanzas := len(stanzas)
+	padlen := 1
+	for i := 0; i < num_stanzas; i++ {
+		ipadlen := padlen - ((i + 1) / 10)
 		stanza := stanzas[i]
-		padlen := strconv.Itoa((i + 1))
 		item := strconv.Itoa(i + 1)
 		name := stanza.name
 		help := stanza.help
@@ -307,8 +313,8 @@ func printLongMenu(stanzas []ScriptStanza) {
 			name = ansiNormal(name)
 			help = ansiNormal(help)
 		}
-		item = strings.Repeat(" ", len(padlen)) + item
-		fmt.Fprintf(w, "%s:\t%s\t\t\t%s\n", item, name, help)
+		item = strings.Repeat(" ", ipadlen) + item
+		fmt.Fprintf(w, " %s:\t%s\t\t\t%s\n", item, name, help)
 	}
 	w.Flush()
 	fmt.Println()
@@ -317,7 +323,7 @@ func printLongMenu(stanzas []ScriptStanza) {
 func main() {
 	dotfePath := findDotfe()
 	if dotfePath == "" {
-		failMsg := "Not an Iron tree, no '.fe' found"
+		failMsg := "Not an Iron tree, no '.fe' (or in any parent directories)"
 		fmt.Fprintln(os.Stderr, failMsg)
 		die()
 	}
