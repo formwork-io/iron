@@ -11,8 +11,8 @@ function on_exit {
 }
 trap on_exit EXIT
 
-#go get -u github.com/onsi/ginkgo/ginkgo
-#go get -u github.com/onsi/gomega
+go get -u github.com/onsi/ginkgo/ginkgo
+go get -u github.com/onsi/gomega
 PATH="$GOPATH/bin:$PATH"
 go build
 ginkgo
