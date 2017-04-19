@@ -6,14 +6,21 @@ export GOPATH="$(pwd)"
 
 ln -s vendor src
 src_ln="$(pwd)/src"
+fake_src="$(pwd)/src/github.com/formwork-io"
+mkdir -p "$fake_src"
+ln -s $(realpath ../) "$fake_src/iron"
 function on_exit {
     rm "$src_ln" 
+    rm -fr "$fake_src"
 }
 trap on_exit EXIT
 
-go get -u github.com/onsi/ginkgo/ginkgo
-go get -u github.com/onsi/gomega
+go get github.com/onsi/ginkgo/ginkgo
+go get github.com/onsi/gomega
 PATH="$GOPATH/bin:$PATH"
-go build
-ginkgo
-
+ginkgo -r --randomizeAllSpecs \
+          --randomizeSuites \
+          --failOnPending \
+          --cover \
+          --trace \
+          --progress
