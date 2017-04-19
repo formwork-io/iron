@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+#
+# iron: the fe shell
+# https://github.com/formwork-io/iron
+#
+my_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$my_dir/iron-funcs-private"
+source "$my_dir/iron-funcs-public"
