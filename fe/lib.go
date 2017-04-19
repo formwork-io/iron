@@ -31,8 +31,9 @@ import "path"
 import "regexp"
 import "strings"
 
-var ESC = ""
+var esc = ""
 
+// ScriptStanza contains the fields that make up an Iron script.
 type ScriptStanza struct {
 	name         string
 	help         string
@@ -51,30 +52,33 @@ func panicNonNil(e error) {
 }
 
 func ansiReverse(input string) string {
-	reverse := fmt.Sprintf("%s[7m%s%s[0m", ESC, input, ESC)
+	reverse := fmt.Sprintf("%s[7m%s%s[0m", esc, input, esc)
 	return reverse
 }
 
 func ansiNormal(input string) string {
-	normal := fmt.Sprintf("%s[0m%s%s[0m", ESC, input, ESC)
+	normal := fmt.Sprintf("%s[0m%s%s[0m", esc, input, esc)
 	return normal
 }
 
-func isExtendedHelp(input string) bool {
+// IsExtendedHelp recognizes extended help syntax.
+func IsExtendedHelp(input string) bool {
 	pattern := "^[1-9][0-9]*\\?$"
 	match, e := regexp.Match(pattern, []byte(input))
 	panicNonNil(e)
 	return match
 }
 
-func isSubmenuArgcall(input string) bool {
+// IsSubmenuArgcall recognizes submenu argument syntax.
+func IsSubmenuArgcall(input string) bool {
 	pattern := "^[1-9][0-9]*,[0-9,]*$"
 	match, e := regexp.Match(pattern, []byte(input))
 	panicNonNil(e)
 	return match
 }
 
-func isItem(input string) bool {
+// IsItem recognizes item syntax.
+func IsItem(input string) bool {
 	pattern := "^[1-9][0-9]*$"
 	match, e := regexp.Match(pattern, []byte(input))
 	panicNonNil(e)
@@ -94,13 +98,8 @@ func getAssignedValue(key string, input string) (string, bool) {
 	return "", false
 }
 
-func getPadding(scripts []string) int {
-	paddingStr := fmt.Sprintf(" %d:")
-	padding := len(paddingStr)
-	return padding
-}
-
-func getMaxScriptName(stanzas []ScriptStanza) int {
+// GetMaxScriptName returns the maximum script name length.
+func GetMaxScriptName(stanzas []ScriptStanza) int {
 	max := 0
 	for _, stanza := range stanzas {
 		if len(stanza.name) > max {
@@ -110,7 +109,8 @@ func getMaxScriptName(stanzas []ScriptStanza) int {
 	return max
 }
 
-func readScriptStanza(scriptPath string) ScriptStanza {
+// ReadScriptStanza parses a script for the parts of the Iron script stanza.
+func ReadScriptStanza(scriptPath string) ScriptStanza {
 	stanza := ScriptStanza{}
 	stanza.name = path.Base(scriptPath)
 	stanza.help = "This script has no help."

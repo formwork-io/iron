@@ -374,14 +374,14 @@ func main() {
 	stanzas := []ScriptStanza{}
 	for _, script := range scripts {
 		scriptPath := filepath.Join(scriptLoc, script)
-		stanza := readScriptStanza(scriptPath)
+		stanza := ReadScriptStanza(scriptPath)
 		log.WithFields(logrus.Fields{
 			"file": script,
 			"name": stanza.name,
 		}).Debug("got stanza")
 		stanzas = append(stanzas, stanza)
 	}
-	maxScriptNameLen = getMaxScriptName(stanzas)
+	maxScriptNameLen = GetMaxScriptName(stanzas)
 	header()
 
 	printShortMenu(stanzas)
@@ -405,7 +405,7 @@ func main() {
 		log.WithFields(logrus.Fields{
 			"line": line,
 		}).Debug("read line")
-		if isExtendedHelp(line) {
+		if IsExtendedHelp(line) {
 			log.Info("you want extended help!")
 		}
 		if err == readline.ErrInterrupt {
@@ -421,7 +421,7 @@ func main() {
 		tokens := strings.Split(line, " ")
 		for _, token := range tokens {
 
-			if isItem(token) {
+			if IsItem(token) {
 				log.Debug("isItem")
 				choice, err := strconv.Atoi(token)
 				if err != nil || choice > len(stanzas) {
