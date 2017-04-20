@@ -12,6 +12,8 @@ the fe shell
     :target: https://goreportcard.com/report/github.com/formwork-io/iron
 .. image:: https://img.shields.io/github/license/formwork-io/iron.svg
     :target: https://github.com/formwork-io/iron/blob/master/LICENSE
+.. image:: https://img.shields.io/github/release/formwork-io/iron.svg
+    :target: https://github.com/formwork-io/iron/releases
 
 Even in all its glory, your codebase will inevitably make you want to gouge
 your eyes out. It will demand you recite arcane incantations. You will need to
