@@ -8,6 +8,8 @@ the fe shell
 
 .. image:: https://badge.buildkite.com/1cc84fbae89b6ccc0dee4530f6d00d18f298b9d44f6d73b89f.svg?branch=experimental
     :target: https://buildkite.com/nbargnesi/formwork-io-slash-iron
+.. image:: https://img.shields.io/github/license/formwork-io/iron.svg
+    :target: https://github.com/formwork-io/iron/blob/experimental/LICENSE
 
 Even in all its glory, your codebase will inevitably make you want to gouge
 your eyes out. It will demand you recite arcane incantations. You will need to
