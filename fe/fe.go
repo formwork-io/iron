@@ -271,9 +271,9 @@ func printShortMenu(stanzas []ScriptStanza) {
 	fmt.Println()
 	const padding = 1
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', 0)
-	num_stanzas := len(stanzas)
+	numStanzas := len(stanzas)
 	padlen := 1
-	for i := 0; i < num_stanzas; i++ {
+	for i := 0; i < numStanzas; i++ {
 		ipadlen := padlen - ((i + 1) / 10)
 		stanza := stanzas[i]
 		item := strconv.Itoa(i + 1)
@@ -296,9 +296,9 @@ func printLongMenu(stanzas []ScriptStanza) {
 	fmt.Println()
 	const padding = 1
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', 0)
-	num_stanzas := len(stanzas)
+	numStanzas := len(stanzas)
 	padlen := 1
-	for i := 0; i < num_stanzas; i++ {
+	for i := 0; i < numStanzas; i++ {
 		ipadlen := padlen - ((i + 1) / 10)
 		stanza := stanzas[i]
 		item := strconv.Itoa(i + 1)
