@@ -1,6 +1,11 @@
 Iron
 ====
 
+.. image:: https://img.shields.io/github/license/formwork-io/iron.svg
+    :target: https://github.com/formwork-io/iron/blob/master/LICENSE
+.. image:: https://img.shields.io/github/release/formwork-io/iron.svg
+    :target: https://github.com/formwork-io/iron/releases
+
 the fe shell
 ------------
 
@@ -8,12 +13,8 @@ the fe shell
 
 .. image:: https://badge.buildkite.com/1cc84fbae89b6ccc0dee4530f6d00d18f298b9d44f6d73b89f.svg?branch=master
     :target: https://buildkite.com/nbargnesi/formwork-io-slash-iron
-.. image:: https://goreportcard.com/badge/github.com/formwork-io/iron
-    :target: https://goreportcard.com/report/github.com/formwork-io/iron
-.. image:: https://img.shields.io/github/license/formwork-io/iron.svg
-    :target: https://github.com/formwork-io/iron/blob/master/LICENSE
-.. image:: https://img.shields.io/github/release/formwork-io/iron.svg
-    :target: https://github.com/formwork-io/iron/releases
+.. image:: https://api.codacy.com/project/badge/Grade/8754ac78115c4712ac4dbcbd6336e13e
+    :target: https://www.codacy.com/app/nbargnesi/iron?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=formwork-io/iron&amp;utm_campaign=Badge_Grade
 
 Even in all its glory, your codebase will inevitably make you want to gouge
 your eyes out. It will demand you recite arcane incantations. You will need to
