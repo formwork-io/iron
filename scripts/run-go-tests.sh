@@ -21,6 +21,7 @@ if [ -z "$GOPATH" ]; then
     go get github.com/onsi/ginkgo/ginkgo
     go get github.com/onsi/gomega
     echo "okay"
+    PATH="$GOPATH/bin":$PATH
 else
     top="$(realpath $dir/..)"
 fi
