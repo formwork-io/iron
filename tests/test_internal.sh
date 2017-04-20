@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-source "$TOP_DIR"/.iron.sh || exit 1
+source "$IRON_FUNCS" || exit 1
 
 test_g_varset() {
     # assert PATH is usable for testing

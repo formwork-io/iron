@@ -1,0 +1,6 @@
+steps:
+  - command: "scripts/run-go-tests.sh"
+    label: "go tests"
+
+  - command: "scripts/run-script-tests.sh"
+    label: "script tests"
