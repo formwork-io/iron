@@ -105,10 +105,10 @@ func checkVersion(keyValues map[string]string) {
 }
 
 func getPrompt(keyValues map[string]string) string {
-	dflt_prompt := "iron (?|#|#?|!)» "
+	dfltPrompt := "iron (?|#|#?|!)» "
 	prompt := keyValues[dotfeKeyIronPrompt]
 	if prompt == "" {
-		return dflt_prompt
+		return dfltPrompt
 	}
 	prompt = strings.Trim(prompt, "\"")
 	return prompt
