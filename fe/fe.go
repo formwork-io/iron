@@ -251,7 +251,7 @@ func findDotfe() string {
 }
 
 func scriptHeader(stanza ScriptStanza) {
-	header := fmt.Sprintf("(%s)\n\n", ansiReverse(stanza.name))
+	header := fmt.Sprintf("(%s)\n\n", ansiReverse(stanza.Name))
 	log.Info(header)
 }
 
@@ -263,7 +263,7 @@ func warnChoice(numScripts int) {
 
 func warnFailed(stanza ScriptStanza) {
 	msgfmt := "(%s failed)"
-	msg := fmt.Sprintf(msgfmt, stanza.name)
+	msg := fmt.Sprintf(msgfmt, stanza.Name)
 	log.Warn(msg)
 }
 
@@ -277,7 +277,7 @@ func printShortMenu(stanzas []ScriptStanza) {
 		ipadlen := padlen - ((i + 1) / 10)
 		stanza := stanzas[i]
 		item := strconv.Itoa(i + 1)
-		name := stanza.name
+		name := stanza.Name
 		if lastChoice == i+1 {
 			item = ansiReverse(item)
 			name = ansiReverse(name)
@@ -302,8 +302,8 @@ func printLongMenu(stanzas []ScriptStanza) {
 		ipadlen := padlen - ((i + 1) / 10)
 		stanza := stanzas[i]
 		item := strconv.Itoa(i + 1)
-		name := stanza.name
-		help := stanza.help
+		name := stanza.Name
+		help := stanza.Help
 		if lastChoice == i+1 {
 			item = ansiReverse(item)
 			name = ansiReverse(name)
@@ -377,7 +377,7 @@ func main() {
 		stanza := ReadScriptStanza(scriptPath)
 		log.WithFields(logrus.Fields{
 			"file": script,
-			"name": stanza.name,
+			"name": stanza.Name,
 		}).Debug("got stanza")
 		stanzas = append(stanzas, stanza)
 	}
@@ -432,7 +432,7 @@ func main() {
 				stanza := stanzas[choice-1]
 				scriptHeader(stanza)
 				// an interface would be useful here
-				cmdStr := fmt.Sprintf("%s", stanza.scriptPath)
+				cmdStr := fmt.Sprintf("%s", stanza.ScriptPath)
 				args := []string{}
 				cmd := exec.Command(cmdStr, args...)
 
@@ -445,7 +445,7 @@ func main() {
 				scanner := bufio.NewScanner(cmdrdr)
 				go func() {
 					for scanner.Scan() {
-						fmt.Printf("%s | %s\n", stanza.name, scanner.Text())
+						fmt.Printf("%s | %s\n", stanza.Name, scanner.Text())
 					}
 				}()
 

@@ -35,10 +35,10 @@ var esc = ""
 
 // ScriptStanza contains the fields that make up an Iron script.
 type ScriptStanza struct {
-	name         string
-	help         string
-	extendedHelp string
-	scriptPath   string
+	Name         string
+	Help         string
+	ExtendedHelp string
+	ScriptPath   string
 }
 
 func die() {
@@ -102,8 +102,8 @@ func getAssignedValue(key string, input string) (string, bool) {
 func GetMaxScriptName(stanzas []ScriptStanza) int {
 	max := 0
 	for _, stanza := range stanzas {
-		if len(stanza.name) > max {
-			max = len(stanza.name)
+		if len(stanza.Name) > max {
+			max = len(stanza.Name)
 		}
 	}
 	return max
@@ -112,10 +112,10 @@ func GetMaxScriptName(stanzas []ScriptStanza) int {
 // ReadScriptStanza parses a script for the parts of the Iron script stanza.
 func ReadScriptStanza(scriptPath string) ScriptStanza {
 	stanza := ScriptStanza{}
-	stanza.name = path.Base(scriptPath)
-	stanza.help = "This script has no help."
-	stanza.extendedHelp = "This script has no extended help."
-	stanza.scriptPath = scriptPath
+	stanza.Name = path.Base(scriptPath)
+	stanza.Help = "This script has no help."
+	stanza.ExtendedHelp = "This script has no extended help."
+	stanza.ScriptPath = scriptPath
 
 	f, err := os.Open(scriptPath)
 	defer f.Close()
@@ -130,19 +130,19 @@ func ReadScriptStanza(scriptPath string) ScriptStanza {
 
 		value, ok = getAssignedValue("IRON_SCRIPT_NAME", text)
 		if ok {
-			stanza.name = value
+			stanza.Name = value
 			continue
 		}
 
 		value, ok = getAssignedValue("IRON_SCRIPT_HELP", text)
 		if ok {
-			stanza.help = value
+			stanza.Help = value
 			continue
 		}
 
 		value, ok = getAssignedValue("IRON_SCRIPT_EXTENDED_HELP", text)
 		if ok {
-			stanza.extendedHelp = value
+			stanza.ExtendedHelp = value
 			continue
 		}
 	}
