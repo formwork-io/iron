@@ -2,27 +2,20 @@ package main_test
 
 import "os"
 import "path"
+import "path/filepath"
 import . "github.com/formwork-io/iron/fe"
 import . "github.com/onsi/ginkgo"
 import . "github.com/onsi/gomega"
 
-var _ = Describe("Internal", func() {
+var _ = Describe("Lib", func() {
 	var examples string
 
 	BeforeEach(func() {
-		cwd, err := os.Getwd();
+		cwd, err := os.Getwd()
 		if err != nil {
 			panic(err)
 		}
 		examples = path.Join(cwd, "..", "examples")
-	})
-
-	Describe("Extended help", func() {
-		Context("With a single digit", func() {
-			It("should match", func() {
-				Expect(IsExtendedHelp("1?")).To(BeTrue())
-			})
-		})
 	})
 
 	Describe("Submenu argcalls", func() {
@@ -59,7 +52,11 @@ var _ = Describe("Internal", func() {
 
 	Describe("Reading scripts", func() {
 		Context("Using examples", func() {
-			It("parses example one", func() {
+			It("parses name and help", func() {
+				example := filepath.Join(examples, "01-test-success.sh")
+				stanza := ReadScriptStanza(example)
+				Expect(stanza.Name).To(Equal("test-success"))
+				Expect(stanza.Help).To(Equal("Mimic a successful script."))
 			})
 		})
 	})

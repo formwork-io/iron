@@ -29,7 +29,7 @@ import "fmt"
 import "io"
 import "io/ioutil"
 import "os"
-import "os/exec"
+
 import "strconv"
 import "strings"
 import "github.com/chzyer/readline"
@@ -40,7 +40,10 @@ import prefixed "github.com/x-cray/logrus-prefixed-formatter"
 import "text/tabwriter"
 
 var ironHome = "IRON_HOME"
-var ironVersion = 0.9
+
+// IronVersion is the Iron version number.
+var IronVersion = 0.9
+
 var ironFuncs = "iron-funcs"
 var ironLogLevel = "IRON_LOG_LEVEL"
 
@@ -95,9 +98,9 @@ func checkVersion(keyValues map[string]string) {
 	}
 	fVersion, err := strconv.ParseFloat(version, 64)
 	panicNonNil(err)
-	if ironVersion < fVersion {
+	if IronVersion < fVersion {
 		need := fmt.Sprintf("%.2f", fVersion)
-		have := fmt.Sprintf("%.2f", ironVersion)
+		have := fmt.Sprintf("%.2f", IronVersion)
 		msg := fmt.Sprintf("Iron version %s required (have %s)\n", need, have)
 		fmt.Fprintf(os.Stderr, msg)
 		die()
@@ -197,7 +200,7 @@ func init() {
 			fmt.Printf("%s\n", funcs)
 			os.Exit(0)
 		case "version":
-			fmt.Printf("%f\n", ironVersion)
+			fmt.Printf("%f\n", IronVersion)
 			os.Exit(0)
 		case "help":
 			help()
@@ -405,9 +408,6 @@ func main() {
 		log.WithFields(logrus.Fields{
 			"line": line,
 		}).Debug("read line")
-		if IsExtendedHelp(line) {
-			log.Info("you want extended help!")
-		}
 		if err == readline.ErrInterrupt {
 			if len(line) == 0 {
 				break
@@ -431,34 +431,7 @@ func main() {
 				lastChoice = choice
 				stanza := stanzas[choice-1]
 				scriptHeader(stanza)
-				// an interface would be useful here
-				cmdStr := fmt.Sprintf("%s", stanza.ScriptPath)
-				args := []string{}
-				cmd := exec.Command(cmdStr, args...)
-
-				cmdrdr, err := cmd.StdoutPipe()
-				if err != nil {
-					log.Error(err)
-					die()
-				}
-
-				scanner := bufio.NewScanner(cmdrdr)
-				go func() {
-					for scanner.Scan() {
-						fmt.Printf("%s | %s\n", stanza.Name, scanner.Text())
-					}
-				}()
-
-				err = cmd.Start()
-				if err != nil {
-					log.Error(err)
-					die()
-				}
-
-				err = cmd.Wait()
-				if err != nil {
-					warnFailed(stanza)
-				}
+				feExec(stanza)
 				continue
 			}
 

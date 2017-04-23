@@ -35,10 +35,15 @@ var esc = ""
 
 // ScriptStanza contains the fields that make up an Iron script.
 type ScriptStanza struct {
-	Name         string
-	Help         string
-	ExtendedHelp string
-	ScriptPath   string
+
+	// Name is displayed to the user alongside the menu number.
+	Name string
+
+	// Help is displayed to the user alongside the script name.
+	Help string
+
+	// ScriptPath is the path to the script.
+	ScriptPath string
 }
 
 func die() {
@@ -61,14 +66,6 @@ func ansiNormal(input string) string {
 	return normal
 }
 
-// IsExtendedHelp recognizes extended help syntax.
-func IsExtendedHelp(input string) bool {
-	pattern := "^[1-9][0-9]*\\?$"
-	match, e := regexp.Match(pattern, []byte(input))
-	panicNonNil(e)
-	return match
-}
-
 // IsSubmenuArgcall recognizes submenu argument syntax.
 func IsSubmenuArgcall(input string) bool {
 	pattern := "^[1-9][0-9]*,[0-9,]*$"
@@ -86,7 +83,7 @@ func IsItem(input string) bool {
 }
 
 func getAssignedValue(key string, input string) (string, bool) {
-	keyRE := fmt.Sprintf(`%s=\"(.)*\"`, key)
+	keyRE := fmt.Sprintf(`%s=("|""")(?s:(.)*)("|""")`, key)
 	re := regexp.MustCompile(keyRE)
 	match := re.FindStringSubmatch(input)
 	if len(match) > 0 {
@@ -114,7 +111,6 @@ func ReadScriptStanza(scriptPath string) ScriptStanza {
 	stanza := ScriptStanza{}
 	stanza.Name = path.Base(scriptPath)
 	stanza.Help = "This script has no help."
-	stanza.ExtendedHelp = "This script has no extended help."
 	stanza.ScriptPath = scriptPath
 
 	f, err := os.Open(scriptPath)
@@ -137,12 +133,6 @@ func ReadScriptStanza(scriptPath string) ScriptStanza {
 		value, ok = getAssignedValue("IRON_SCRIPT_HELP", text)
 		if ok {
 			stanza.Help = value
-			continue
-		}
-
-		value, ok = getAssignedValue("IRON_SCRIPT_EXTENDED_HELP", text)
-		if ok {
-			stanza.ExtendedHelp = value
 			continue
 		}
 	}
