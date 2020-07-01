@@ -35,7 +35,7 @@ import "strings"
 import "github.com/chzyer/readline"
 import "path/filepath"
 import "regexp"
-import "github.com/Sirupsen/logrus"
+import "github.com/sirupsen/logrus"
 import prefixed "github.com/x-cray/logrus-prefixed-formatter"
 import "text/tabwriter"
 
@@ -71,7 +71,7 @@ func help() {
 	msg += "want to gouge your eyes out. It will demand you recite arcane\n"
 	msg += "incantations. You will need to coax it to finish a simple\n"
 	msg += "task. It will be best friends with your teammates and\n"
-	msg += "visciously stab you behind your back when you need it most.\n"
+	msg += "viciously stab you behind your back when you need it most.\n"
 	msg += "It will be the bicycle you forget how to ride.\n"
 	msg += "\n"
 	msg += "The fe shell will let you keep your eyes. You can forget the\n"
@@ -320,6 +320,21 @@ func printLongMenu(stanzas []ScriptStanza) {
 	fmt.Println()
 }
 
+func printExtendedHelp(item string, stanza ScriptStanza) {
+	fmt.Println()
+	const padding = 1
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, padding, ' ', 0)
+	name := stanza.name
+	extendedHelp := stanza.extendedHelp
+	item = ansiNormal(item)
+	name = ansiNormal(name)
+	extendedHelp = ansiNormal(extendedHelp)
+	item = strings.Repeat(" ", 2) + item
+	fmt.Fprintf(w, "%s:\t%s\t\t\t%s\n", item, name, extendedHelp)
+	w.Flush()
+	fmt.Println()
+}
+
 func main() {
 	dotfePath := findDotfe()
 	if dotfePath == "" {
@@ -405,9 +420,6 @@ func main() {
 		log.WithFields(logrus.Fields{
 			"line": line,
 		}).Debug("read line")
-		if IsExtendedHelp(line) {
-			log.Info("you want extended help!")
-		}
 		if err == readline.ErrInterrupt {
 			if len(line) == 0 {
 				break
@@ -459,6 +471,19 @@ func main() {
 				if err != nil {
 					warnFailed(stanza)
 				}
+				continue
+			}
+
+			item, ok := IsExtendedHelpForItem(token)
+			if ok {
+				choice, err := strconv.Atoi(item)
+				if err != nil || choice > len(stanzas) {
+					warnChoice(len(stanzas))
+					continue
+				}
+
+				stanza := stanzas[choice-1]
+				printExtendedHelp(item, stanza)
 				continue
 			}
 
