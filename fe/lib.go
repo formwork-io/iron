@@ -85,6 +85,16 @@ func IsItem(input string) bool {
 	return match
 }
 
+func IsExtendedHelpForItem(input string) (string, bool) {
+	re := regexp.MustCompile(`^([1-9][0-9]*)\?`)
+	match := re.FindStringSubmatch(input)
+	if len(match) > 0 {
+		return match[1], true
+	} else {
+		return "", false
+	}
+}
+
 func getAssignedValue(key string, input string) (string, bool) {
 	keyRE := fmt.Sprintf(`%s=\"(.)*\"`, key)
 	re := regexp.MustCompile(keyRE)
